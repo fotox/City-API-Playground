@@ -1,5 +1,3 @@
-import uuid
-
 from flask import Flask
 
 from city_be.city import *
@@ -14,12 +12,11 @@ app = Flask(__name__)
 
 @app.route('/api/city', methods=['GET'])
 def get_cities():
-    return load_all_cities()
+    return load_city()
 
 
 @app.route('/api/city/<city_id>', methods=['GET'])
 def get_city(city_id: str):
-    print(city_id)
     return load_city(city_id)
 
 
