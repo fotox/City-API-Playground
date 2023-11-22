@@ -4,7 +4,11 @@ import zipfile
 import os
 import datetime
 
+
 SCRIPT_PATH: str = os.path.dirname(os.path.realpath(__file__))
+
+if os.name == 'posix':
+    SCRIPT_PATH = "/var/log/"
 
 
 def viki_log(module_name: str) -> logging.Logger:

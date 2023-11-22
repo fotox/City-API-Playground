@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: city_database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_pw
+      POSTGRES_DB: cities
+    ports:
+      - "5432:5432"
+
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-api
+    environment:
+      PGHOST: city_database
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres_pw
+    ports:
+      - "1337:1337"
+    depends_on:
+      - postgres
