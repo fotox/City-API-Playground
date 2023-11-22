@@ -15,3 +15,8 @@ class SelectCityData(Enum):
 class DeleteCityData(Enum):
     CITY = ("DELETE FROM alliances WHERE city = %s or allied_cities = %s;"
             "DELETE FROM city WHERE city_uuid = %s;")
+
+
+class InsertCityData(Enum):
+    CITY = ("INSERT INTO city (city_uuid, name, geo_location_latitude, geo_location_longitude, beauty, population) "
+            "VALUES (%s, %s, %s, %s, %s, %s)")

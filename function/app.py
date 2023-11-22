@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Flask, jsonify
 
 from city_be.city import *
@@ -22,7 +24,15 @@ def get_city(city_id: str):
 
 @app.route('/api/city', methods=['POST'])
 def create_city():
-    pass
+    dataset: dict = {
+        "beauty": "Average",
+        "city_uuid": uuid.uuid4(),
+        "geo_location_latitude": 34.0522,
+        "geo_location_longitude": -118.2437,
+        "name": "City B",
+        "population": 150000
+    }
+    return insert_city_into_database(dataset)
 
 
 @app.route('/api/city', methods=['PUT'])

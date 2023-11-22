@@ -50,3 +50,26 @@ def delete_city_from_database(city_id: str) -> Response:
     connection['cursor'].execute(DeleteCityData.CITY.value, (city_id,))
     disconnect_to_postgres(connection)
     return jsonify({'message': 'Item deleted successfully'})
+
+
+def insert_city_into_database(city_dataset: dict) -> Response:
+    connection = connect_to_postgres()
+    try:
+        connection['cursor'].execute(InsertCityData.CITY.value, (
+            city_dataset.get('city_uuid'),
+            city_dataset.get('name'),
+            city_dataset.get('geo_location_latitude'),
+            city_dataset.get('geo_location_longitude'),
+            city_dataset.get('beauty'),
+            city_dataset.get('population'),
+        ))
+        connection['conn'].commit()
+        return jsonify({'message': 'Item created successfully'})
+
+    except Exception as e:
+        return jsonify({'error': f'Failed to insert item into the database. {str(e)}'})
+
+    finally:
+        disconnect_to_postgres(connection)
+
+# TODO: Add alliances to insert city
