@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-ENV PGHOST city_database
+ENV PGHOST 127.0.0.1
 ENV PGPORT 5432
 ENV PGUSER postgres
 ENV PGPASSWORD postgres_pw
