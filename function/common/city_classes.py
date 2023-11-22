@@ -10,3 +10,6 @@ class SelectCityData(Enum):
             "bs.description, city.population FROM city "
             "INNER JOIN beauty_score AS bs ON city.beauty = bs.id "
             "WHERE city.city_uuid = %s;")
+
+    ALLIANCES = ("SELECT allied_cities FROM alliances "
+                 "WHERE city = %s;")
