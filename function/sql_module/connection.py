@@ -29,12 +29,7 @@ def connect_to_postgres() -> dict:
     except Exception as e:
         logger.error(f"No connection to database: {e} - Type: {type(e)}")
 
-    connection = {
-        "conn": connection,
-        "cursor": cursor
-    }
-
-    return connection
+    return {"conn": connection, "cursor": cursor}
 
 
 def cancel_connection_to_postgres(connection: dict) -> None:
