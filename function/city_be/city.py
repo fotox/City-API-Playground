@@ -1,10 +1,13 @@
-from common.city_classes import SelectCityData
+from flask import jsonify, Response
+
+from common.alliances_classes import SelectAlliancesData
+from common.city_classes import *
 from sql_module.connection import *
 
 
 def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
-    logger.debug(f"Query: {SelectCityData.ALLIANCES.value, (city_id,)}")
-    connection['cursor'].execute(SelectCityData.ALLIANCES.value, (city_id,))
+    logger.debug(f"Query: {SelectAlliancesData.ALLIANCES.value, (city_id,)}")
+    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
     result = [row[0] for row in connection['cursor'].fetchall()]
     logger.debug(f"Result Alliances: {result}")
     return result, connection
@@ -23,7 +26,7 @@ def convert_city_response_to_dict(city_uuid: str, name: str, geo_location_latitu
     }
 
 
-def load_city(city_id: str = None):
+def get_city_from_database(city_id: str = None) -> Response:
     connection = connect_to_postgres()
     city_list: list = []
     if city_id is None:
@@ -38,5 +41,12 @@ def load_city(city_id: str = None):
         city['allied_cities'] = alliances
         city_list.append(city)
 
-    cancel_connection_to_postgres(connection)
-    return city_list
+    disconnect_to_postgres(connection)
+    return jsonify(city_list)
+
+
+def delete_city_from_database(city_id: str) -> Response:
+    connection = connect_to_postgres()
+    connection['cursor'].execute(DeleteCityData.CITY.value, (city_id,))
+    disconnect_to_postgres(connection)
+    return jsonify({'message': 'Item deleted successfully'})

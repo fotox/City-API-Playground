@@ -32,7 +32,7 @@ def connect_to_postgres() -> dict:
     return {"conn": connection, "cursor": cursor}
 
 
-def cancel_connection_to_postgres(connection: dict) -> None:
+def disconnect_to_postgres(connection: dict) -> None:
     """
     Closed connection to postgres database
     :param connection: connection and cursor as dict

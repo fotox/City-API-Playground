@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 from city_be.city import *
 from log_module.log_app import viki_log
@@ -12,12 +12,12 @@ app = Flask(__name__)
 
 @app.route('/api/city', methods=['GET'])
 def get_cities():
-    return load_city()
+    return get_city_from_database()
 
 
 @app.route('/api/city/<city_id>', methods=['GET'])
 def get_city(city_id: str):
-    return load_city(city_id)
+    return get_city_from_database(city_id)
 
 
 @app.route('/api/city', methods=['POST'])
@@ -30,9 +30,9 @@ def update_city():
     pass
 
 
-@app.route('/api/city', methods=['DELETE'])
-def delete_city():
-    pass
+@app.route('/api/city/<city_id>', methods=['DELETE'])
+def delete_city(city_id: str):
+    return delete_city_from_database(city_id)
 
 
 if __name__ == '__main__':
