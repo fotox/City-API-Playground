@@ -23,17 +23,20 @@ def convert_city_response_to_dict(city_uuid: str, name: str, geo_location_latitu
     }
 
 
-def load_city(city_id: str = None) -> dict:
+def load_city(city_id: str = None):
     connection = connect_to_postgres()
+    city_list: list = []
     if city_id is None:
         connection['cursor'].execute(SelectCityData.CITIES.value)
         result = [convert_city_response_to_dict(*row) for row in connection['cursor'].fetchall()]
     else:
         connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
-        result = [convert_city_response_to_dict(*row) for row in connection['cursor'].fetchall()][0]
+        result = [convert_city_response_to_dict(*row) for row in connection['cursor'].fetchall()]
 
-    alliances, connection = load_alliances(connection, city_id)
-    result['alliances'] = alliances
+    for city in result:
+        alliances, connection = load_alliances(connection, city['city_uuid'])
+        city['allied_cities'] = alliances
+        city_list.append(city)
 
     cancel_connection_to_postgres(connection)
-    return result
+    return city_list
