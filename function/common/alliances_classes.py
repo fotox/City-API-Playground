@@ -7,5 +7,5 @@ class SelectAlliancesData(Enum):
 
 
 class InsertAllianceData(Enum):
-    ALLIANCES = ("INSERT INTO alliances"
-                 "")
+    ALLIANCES = ("INSERT INTO alliances (city, allied_cities) "
+                 "VALUES (%s, %s);")
