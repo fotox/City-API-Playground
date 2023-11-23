@@ -1,7 +1,7 @@
 from flask import Flask, request
 
 from city_be.city import *
-from common.handler import check_response
+from common.handler import check_get_response
 from log_module.log_app import viki_log
 
 logger = viki_log("city_api")
@@ -15,14 +15,14 @@ app = Flask(__name__)
 def get_cities():
     dataset: list = get_city_from_database()
     message: str = "Cities found successfully"
-    return check_response(dataset, message)
+    return check_get_response(dataset, message)
 
 
 @app.route('/api/city/<city_id>', methods=['GET'])
 def get_city(city_id: str):
     dataset: list = get_city_from_database(city_id)
     message: str = "City found successfully"
-    return check_response(dataset, message)
+    return check_get_response(dataset, message)
 
 
 @app.route('/api/city', methods=['POST'])
@@ -38,8 +38,8 @@ def update_city():
 
 
 @app.route('/api/city/<city_id>/<alliances_city_id>', methods=['POST'])
-def insert_alliances():
-    dataset = request.get_json()
+def insert_alliances(city_id: str, alliances_city_id: str):
+    dataset = {'city_id': city_id, 'alliances_city_id': alliances_city_id}
     return insert_alliances_to_city(dataset)
 
 

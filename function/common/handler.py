@@ -1,7 +1,7 @@
 from flask import request, make_response, jsonify, Response
 
 
-def check_response(dataset: list, message: str) -> Response:
+def check_get_response(dataset: list, message: str) -> Response:
     if dataset:
         response = {
             'message': message,
