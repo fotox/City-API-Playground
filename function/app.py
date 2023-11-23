@@ -1,8 +1,7 @@
-import uuid
-
-from flask import Flask, jsonify
+from flask import Flask
 
 from city_be.city import *
+from common.handler import check_response
 from log_module.log_app import viki_log
 
 logger = viki_log("city_api")
@@ -14,24 +13,20 @@ app = Flask(__name__)
 
 @app.route('/api/city', methods=['GET'])
 def get_cities():
-    return get_city_from_database()
+    dataset: list = get_city_from_database()
+    message: str = "Cities found successfully"
+    return check_response(dataset, message)
 
 
 @app.route('/api/city/<city_id>', methods=['GET'])
 def get_city(city_id: str):
-    return get_city_from_database(city_id)
+    dataset: list = get_city_from_database(city_id)
+    message: str = "City found successfully"
+    return check_response(dataset, message)
 
 
 @app.route('/api/city', methods=['POST'])
-def create_city():
-    dataset: dict = {
-        "beauty": "Average",
-        "city_uuid": uuid.uuid4(),
-        "geo_location_latitude": 34.0522,
-        "geo_location_longitude": -118.2437,
-        "name": "City B",
-        "population": 150000
-    }
+def create_city(dataset: dict):
     return insert_city_into_database(dataset)
 
 

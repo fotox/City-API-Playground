@@ -26,7 +26,7 @@ def convert_city_response_to_dict(city_uuid: str, name: str, geo_location_latitu
     }
 
 
-def get_city_from_database(city_id: str = None) -> Response:
+def get_city_from_database(city_id: str = None) -> list:
     connection = connect_to_postgres()
     city_list: list = []
     if city_id is None:
@@ -42,7 +42,7 @@ def get_city_from_database(city_id: str = None) -> Response:
         city_list.append(city)
 
     disconnect_to_postgres(connection)
-    return jsonify(city_list)
+    return city_list
 
 
 def delete_city_from_database(city_id: str) -> Response:
