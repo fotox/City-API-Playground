@@ -1,6 +1,6 @@
-from flask import jsonify, Response
+from flask import jsonify, Response, abort
 
-from common.alliances_classes import SelectAlliancesData
+from common.alliances_classes import *
 from common.city_classes import *
 from sql_module.connection import *
 
@@ -52,16 +52,16 @@ def delete_city_from_database(city_id: str) -> Response:
     return jsonify({'message': 'Item deleted successfully'})
 
 
-def insert_city_into_database(city_dataset: dict) -> Response:
+def insert_city_into_database(dataset: dict) -> Response:
     connection = connect_to_postgres()
     try:
         connection['cursor'].execute(InsertCityData.CITY.value, (
-            city_dataset.get('city_uuid'),
-            city_dataset.get('name'),
-            city_dataset.get('geo_location_latitude'),
-            city_dataset.get('geo_location_longitude'),
-            city_dataset.get('beauty'),
-            city_dataset.get('population'),
+            dataset.get('city_uuid'),
+            dataset.get('name'),
+            dataset.get('geo_location_latitude'),
+            dataset.get('geo_location_longitude'),
+            dataset.get('beauty'),
+            dataset.get('population'),
         ))
         connection['conn'].commit()
         return jsonify({'message': 'Item created successfully'})
@@ -72,4 +72,36 @@ def insert_city_into_database(city_dataset: dict) -> Response:
     finally:
         disconnect_to_postgres(connection)
 
-# TODO: Add alliances to insert city
+
+def insert_alliances_to_city(dataset: dict) -> Response:
+    connection = connect_to_postgres()
+    try:
+        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+            dataset['city_id'],
+            dataset['alliances_city_id'],
+        ))
+        connection['conn'].commit()
+        disconnect_to_postgres(connection)
+        return jsonify({'message': 'Alliance between cities updated successfully'})
+
+    except Exception as e:
+        abort(500, description=f'Failed to update alliance between cities in database. {str(e)}')
+
+
+def update_city_into_database(dataset: dict) -> Response:
+    connection = connect_to_postgres()
+    try:
+        connection['cursor'].execute(UpdateCityData.CITY.value, (
+            dataset.get('name'),
+            dataset.get('geo_location_latitude'),
+            dataset.get('geo_location_longitude'),
+            dataset.get('beauty'),
+            dataset.get('population'),
+            dataset.get('city_uuid'),
+        ))
+        connection['conn'].commit()
+        disconnect_to_postgres(connection)
+        return jsonify({'message': 'City updated successfully'})
+
+    except Exception as e:
+        abort(500, description=f'Failed to update city in database. {str(e)}')

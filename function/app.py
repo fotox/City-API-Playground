@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 from city_be.city import *
 from common.handler import check_response
@@ -26,13 +26,21 @@ def get_city(city_id: str):
 
 
 @app.route('/api/city', methods=['POST'])
-def create_city(dataset: dict):
+def create_city():
+    dataset = request.get_json()
     return insert_city_into_database(dataset)
 
 
-@app.route('/api/city', methods=['PUT'])
+@app.route('/api/city/<city_id>', methods=['PUT'])
 def update_city():
-    pass
+    dataset = request.get_json()
+    return update_city_into_database(dataset)
+
+
+@app.route('/api/city/<city_id>/<alliances_city_id>', methods=['POST'])
+def insert_alliances():
+    dataset = request.get_json()
+    return insert_alliances_to_city(dataset)
 
 
 @app.route('/api/city/<city_id>', methods=['DELETE'])

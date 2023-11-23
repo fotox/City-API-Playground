@@ -20,3 +20,9 @@ class DeleteCityData(Enum):
 class InsertCityData(Enum):
     CITY = ("INSERT INTO city (city_uuid, name, geo_location_latitude, geo_location_longitude, beauty, population) "
             "VALUES (%s, %s, %s, %s, %s, %s)")
+
+
+class UpdateCityData(Enum):
+    CITY = ("UPDATE city "
+            "SET name = %s, geo_location_latitude = %s, geo_location_longitude = %s, beauty = %s, population = %s "
+            "WHERE city_uuid = %s")
