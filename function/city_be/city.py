@@ -55,6 +55,7 @@ def delete_city_from_database(city_id: str) -> Response:
     connection = connect_to_postgres()
     try:
         connection['cursor'].execute(DeleteCityData.CITY.value, (city_id, city_id, city_id,))
+        connection['conn'].commit()
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
