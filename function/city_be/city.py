@@ -60,13 +60,12 @@ def get_city_from_database(city_id: str = None) -> list:
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    finally:
-        disconnect_to_postgres(connection)
-
     for city in result:
         alliances, connection = load_alliances(connection, city['city_uuid'])
         city['allied_cities'] = alliances
         city_list.append(city)
+
+    disconnect_to_postgres(connection)
 
     return city_list
 
@@ -79,17 +78,16 @@ def delete_city_from_database(city_id: str) -> Response:
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    finally:
-        disconnect_to_postgres(connection)
+    disconnect_to_postgres(connection)
 
     return jsonify({'message': 'Item deleted successfully'})
 
 
-def insert_city_into_database(dataset: dict) -> str:
+def insert_city_into_database(dataset: dict) -> tuple[list, str]:
     connection = connect_to_postgres()
     beauty_score = get_beauty_score(dataset.get('beauty'))
     city_gen_uuid: str = str(uuid.uuid4())
-    logger.debug(f"Beauty Score is {beauty_score}")
+
     try:
         connection['cursor'].execute(InsertCityData.CITY.value, (
             city_gen_uuid,
@@ -100,22 +98,29 @@ def insert_city_into_database(dataset: dict) -> str:
             dataset.get('population')
         ))
 
-        for alliance_city in dataset.get('allied_cities'):
-            connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-                city_gen_uuid,
-                alliance_city
-            ))
+        if dataset.get('allied_cities') is not None:
+            for alliance_city in dataset.get('allied_cities'):
+                connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+                    city_gen_uuid,
+                    alliance_city
+                ))
 
         connection['conn'].commit()
-        result = 'Item created successfully'
+        message: str = 'Item created successfully'
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    finally:
-        disconnect_to_postgres(connection)
+    try:
+        dataset: list = get_city_from_database(city_gen_uuid)
+        logger.debug(dataset)
 
-    return result
+    except Exception as e:
+        logger.error(f"dataset: list = get_city_from_database(city_gen_uuid): {e}")
+
+    disconnect_to_postgres(connection)
+
+    return dataset, message
 
 
 def insert_alliances_to_city(dataset: dict) -> Response:
@@ -131,8 +136,7 @@ def insert_alliances_to_city(dataset: dict) -> Response:
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    finally:
-        disconnect_to_postgres(connection)
+    disconnect_to_postgres(connection)
 
     return result
 
@@ -158,7 +162,6 @@ def update_city_into_database(dataset: dict) -> Response:
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    finally:
-        disconnect_to_postgres(connection)
+    disconnect_to_postgres(connection)
 
     return result
