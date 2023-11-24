@@ -1,5 +1,7 @@
 from flask import request, make_response, jsonify, Response
 
+from common.alliances_classes import *
+
 
 def check_response(dataset: list, message: str) -> Response:
     if dataset:
@@ -31,3 +33,33 @@ def convert_response(city_uuid: str, name: str, geo_location_latitude: float,
         'population': population,
         'allied_cities': []
     }
+
+
+def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
+    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id, ))
+    result = [row[0] for row in connection['cursor'].fetchall()]
+    return result, connection
+
+
+def insert_alliances(connection: dict, alliances: list, city_id) -> dict:
+    for alliance_city in alliances:
+        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+            city_id,
+            alliance_city
+        ))
+        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+            alliance_city,
+            city_id
+        ))
+    connection['conn'].commit()
+
+    return connection
+
+
+def delete_alliances(connection: dict, city_id) -> dict:
+    connection['cursor'].execute(DeleteAllianceData.ALLIANCES.value, (
+        city_id, city_id
+    ))
+    connection['conn'].commit()
+
+    return connection
