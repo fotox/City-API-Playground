@@ -11,6 +11,10 @@ class SelectCityData(Enum):
             "INNER JOIN beauty_score AS bs ON city.beauty = bs.id "
             "WHERE city.city_uuid = %s;")
 
+    POPULATION = "SELECT population FROM city WHERE city_uuid = %s;"
+
+    LOCATION = "SELECT geo_location_longitude, geo_location_latitude FROM city WHERE city_uuid = %s;"
+
 
 class DeleteCityData(Enum):
     CITY = ("DELETE FROM alliances WHERE city = %s or allied_cities = %s;"

@@ -37,6 +37,11 @@ def get_city_from_database(city_id: str = None) -> list:
         else:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
             result = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            result[0]['allied_power'] = calculate_allied_power(connection,
+                                                               city_id,
+                                                               result[0]['geo_location_latitude'],
+                                                               result[0]['geo_location_longitude'],
+                                                               result[0]['allied_cities'])
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
