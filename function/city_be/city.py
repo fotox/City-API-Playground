@@ -104,6 +104,10 @@ def insert_city_into_database(dataset: dict) -> tuple[list, str]:
                     city_gen_uuid,
                     alliance_city
                 ))
+                connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+                    alliance_city,
+                    city_gen_uuid
+                ))
 
         connection['conn'].commit()
         message: str = 'Item created successfully'
