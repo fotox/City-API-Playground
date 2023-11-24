@@ -28,16 +28,16 @@ def create_city():
     return check_response(dataset, message)
 
 
+@app.route('/api/city/<city_id>/alliance/<alliances_city_id>', methods=['POST'])
+def create_alliances(city_id: str, alliances_city_id: str):
+    dataset = {'city_id': city_id, 'alliances_city_id': alliances_city_id}
+    return insert_alliances_to_city(dataset)
+
+
 @app.route('/api/city/<city_id>', methods=['PUT'])
 def update_city():
     dataset = request.get_json()
     return update_city_into_database(dataset)
-
-
-@app.route('/api/city/<city_id>/alliance/<alliances_city_id>', methods=['POST'])
-def insert_alliances(city_id: str, alliances_city_id: str):
-    dataset = {'city_id': city_id, 'alliances_city_id': alliances_city_id}
-    return insert_alliances_to_city(dataset)
 
 
 @app.route('/api/city/<city_id>', methods=['DELETE'])
