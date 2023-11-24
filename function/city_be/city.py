@@ -21,7 +21,8 @@ def get_beauty_score(beauty: str | int) -> int | str:
     connection = connect_to_postgres()
 
     try:
-        beauty_score: int = connection['cursor'].execute(SelectBeautyData.BEAUTY_SCORE_BY_NAME.value, (beauty,))
+        connection['cursor'].execute(SelectBeautyData.BEAUTY_SCORE_BY_NAME.value, (beauty,))
+        beauty_score: int = connection['cursor'].fetchall()[0]
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
@@ -84,7 +85,7 @@ def delete_city_from_database(city_id: str) -> Response:
     return jsonify({'message': 'Item deleted successfully'})
 
 
-def insert_city_into_database(dataset: dict) -> Response:
+def insert_city_into_database(dataset: dict) -> str:
     connection = connect_to_postgres()
     beauty_score = get_beauty_score(dataset.get('beauty'))
     city_gen_uuid: str = str(uuid.uuid4())
@@ -106,7 +107,7 @@ def insert_city_into_database(dataset: dict) -> Response:
             ))
 
         connection['conn'].commit()
-        result = jsonify({'message': 'Item created successfully'})
+        result = 'Item created successfully'
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
