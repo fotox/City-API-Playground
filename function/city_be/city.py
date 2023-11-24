@@ -12,7 +12,7 @@ logger = viki_log("city_api")
 
 
 def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
-    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
+    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id, ))
     result = [row[0] for row in connection['cursor'].fetchall()]
     return result, connection
 
@@ -73,7 +73,7 @@ def get_city_from_database(city_id: str = None) -> list:
 def delete_city_from_database(city_id: str) -> Response:
     connection = connect_to_postgres()
     try:
-        connection['cursor'].execute(DeleteCityData.CITY.value, (city_id,))
+        connection['cursor'].execute(DeleteCityData.CITY.value, (city_id, city_id, city_id,))
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
