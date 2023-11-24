@@ -1,33 +1,14 @@
 import uuid
 
-from flask import jsonify, Response, abort
+from flask import abort
 
-from common.alliances_classes import *
 from common.beauty_score_classes import *
 from common.city_classes import *
-from common.handler import convert_response
+from common.handler import *
 from sql_module.connection import *
 from log_module.log_app import viki_log
 
 logger = viki_log("city_api")
-
-
-def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
-    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id, ))
-    result = [row[0] for row in connection['cursor'].fetchall()]
-    return result, connection
-
-
-def insert_alliances(connection: dict, alliances: list, city_id) -> None:
-    for alliance_city in alliances:
-        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-            city_id,
-            alliance_city
-        ))
-        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-            alliance_city,
-            city_id
-        ))
 
 
 def get_beauty_score(beauty: str | int) -> int | str:
@@ -119,10 +100,9 @@ def insert_city_into_database(dataset: dict) -> tuple[list, str]:
     return dataset, message
 
 
-def update_city_into_database(dataset: dict) -> Response:
+def update_city_into_database(city_id: str, dataset: dict) -> Response:
     connection = connect_to_postgres()
     beauty_score = get_beauty_score(dataset.get('beauty'))
-    logger.debug(f"Beauty Score is {beauty_score}")
 
     try:
         connection['cursor'].execute(UpdateCityData.CITY.value, (
@@ -131,9 +111,15 @@ def update_city_into_database(dataset: dict) -> Response:
             dataset.get('geo_location_longitude'),
             beauty_score,
             dataset.get('population'),
-            dataset.get('city_uuid'),
+            city_id
         ))
         connection['conn'].commit()
+
+        if dataset.get('allied_cities') is not None:
+            connection = insert_alliances(connection, dataset.get('allied_cities'), city_id)
+        else:
+            connection = delete_alliances(connection, city_id)
+
         disconnect_to_postgres(connection)
         result = jsonify({'message': 'City updated successfully'})
 
