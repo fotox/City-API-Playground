@@ -2,12 +2,8 @@ from flask import Flask, request
 
 from city_be.city import *
 from common.handler import check_get_response
-from log_module.log_app import viki_log
-
-logger = viki_log("city_api")
 
 API_PORT = 1337
-
 app = Flask(__name__)
 
 

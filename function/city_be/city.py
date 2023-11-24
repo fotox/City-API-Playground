@@ -3,13 +3,14 @@ from flask import jsonify, Response, abort
 from common.alliances_classes import *
 from common.city_classes import *
 from sql_module.connection import *
+from log_module.log_app import viki_log
+
+logger = viki_log("city_api")
 
 
 def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
-    logger.debug(f"Query: {SelectAlliancesData.ALLIANCES.value, (city_id,)}")
     connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
     result = [row[0] for row in connection['cursor'].fetchall()]
-    logger.debug(f"Result Alliances: {result}")
     return result, connection
 
 
