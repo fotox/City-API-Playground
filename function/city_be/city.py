@@ -87,16 +87,24 @@ def delete_city_from_database(city_id: str) -> Response:
 def insert_city_into_database(dataset: dict) -> Response:
     connection = connect_to_postgres()
     beauty_score = get_beauty_score(dataset.get('beauty'))
+    city_gen_uuid: str = str(uuid.uuid4())
     logger.debug(f"Beauty Score is {beauty_score}")
     try:
         connection['cursor'].execute(InsertCityData.CITY.value, (
-            str(uuid.uuid4()),
+            city_gen_uuid,
             dataset.get('name'),
             dataset.get('geo_location_latitude'),
             dataset.get('geo_location_longitude'),
             beauty_score,
-            dataset.get('population'),
+            dataset.get('population')
         ))
+
+        for alliance_city in dataset.get('allied_cities'):
+            connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+                city_gen_uuid,
+                alliance_city
+            ))
+
         connection['conn'].commit()
         result = jsonify({'message': 'Item created successfully'})
 
