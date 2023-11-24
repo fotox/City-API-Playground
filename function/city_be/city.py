@@ -5,6 +5,7 @@ from flask import jsonify, Response, abort
 from common.alliances_classes import *
 from common.beauty_score_classes import *
 from common.city_classes import *
+from common.handler import convert_response
 from sql_module.connection import *
 from log_module.log_app import viki_log
 
@@ -15,6 +16,18 @@ def load_alliances(connection: dict, city_id: str) -> tuple[list, dict]:
     connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id, ))
     result = [row[0] for row in connection['cursor'].fetchall()]
     return result, connection
+
+
+def insert_alliances(connection: dict, alliances: list, city_id) -> None:
+    for alliance_city in alliances:
+        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+            city_id,
+            alliance_city
+        ))
+        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
+            alliance_city,
+            city_id
+        ))
 
 
 def get_beauty_score(beauty: str | int) -> int | str:
@@ -32,19 +45,6 @@ def get_beauty_score(beauty: str | int) -> int | str:
     return beauty_score
 
 
-def convert_city_response_to_dict(city_uuid: str, name: str, geo_location_latitude: float,
-                                  geo_location_longitude: float, beauty: str, population: int) -> dict:
-    return {
-        'city_uuid': city_uuid,
-        'name': name,
-        'geo_location_latitude': geo_location_latitude,
-        'geo_location_longitude': geo_location_longitude,
-        'beauty': beauty,
-        'population': population,
-        'allied_cities': []
-    }
-
-
 def get_city_from_database(city_id: str = None) -> list:
     connection = connect_to_postgres()
     city_list: list = []
@@ -52,10 +52,10 @@ def get_city_from_database(city_id: str = None) -> list:
     try:
         if city_id is None:
             connection['cursor'].execute(SelectCityData.CITIES.value)
-            result = [convert_city_response_to_dict(*row) for row in connection['cursor'].fetchall()]
+            result = [convert_response(*row) for row in connection['cursor'].fetchall()]
         else:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
-            result = [convert_city_response_to_dict(*row) for row in connection['cursor'].fetchall()]
+            result = [convert_response(*row) for row in connection['cursor'].fetchall()]
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
@@ -99,15 +99,7 @@ def insert_city_into_database(dataset: dict) -> tuple[list, str]:
         ))
 
         if dataset.get('allied_cities') is not None:
-            for alliance_city in dataset.get('allied_cities'):
-                connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-                    city_gen_uuid,
-                    alliance_city
-                ))
-                connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-                    alliance_city,
-                    city_gen_uuid
-                ))
+            insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
         connection['conn'].commit()
         message: str = 'Item created successfully'
@@ -125,24 +117,6 @@ def insert_city_into_database(dataset: dict) -> tuple[list, str]:
     disconnect_to_postgres(connection)
 
     return dataset, message
-
-
-def insert_alliances_to_city(dataset: dict) -> Response:
-    connection = connect_to_postgres()
-    try:
-        connection['cursor'].execute(InsertAllianceData.ALLIANCES.value, (
-            dataset['city_id'],
-            dataset['alliances_city_id'],
-        ))
-        connection['conn'].commit()
-        result = jsonify({'message': 'Alliance between cities updated successfully'})
-
-    except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
-
-    disconnect_to_postgres(connection)
-
-    return result
 
 
 def update_city_into_database(dataset: dict) -> Response:
