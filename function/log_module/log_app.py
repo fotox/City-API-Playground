@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 if not logger.handlers:
-    log_file = f"{SCRIPT_PATH}\\current\\example.log"
+    log_file = f"{SCRIPT_PATH}\\current\\city_api.log"
     handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30, encoding="utf-8")
     formatter = logging.Formatter(fmt='%(levelname)s | %(asctime)s | %(message)s', datefmt='%Y-%m-%dT%H:%M:%SZ')
     handler.setFormatter(formatter)
