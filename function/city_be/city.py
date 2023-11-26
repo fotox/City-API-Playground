@@ -13,11 +13,11 @@ logger = viki_log("city_api")
 
 def get_beauty_score(beauty: str | int) -> int | str:
     """
-    Look into the database table beauty_score and to find a mat
-    :param beauty:
-    :return:
+    Look into database table beauty_score to find a match by beauty description or name.
+    :param beauty: ID or description
+    :return: ID of existing beauty code
     """
-    connection = connect_to_postgres()
+    connection: dict = connect_to_postgres()
     beauty_score: int = 0
 
     try:
@@ -38,7 +38,12 @@ def get_beauty_score(beauty: str | int) -> int | str:
 
 
 def get_city_from_database(city_id: str = None) -> Response:
-    connection = connect_to_postgres()
+    """
+    Look into database table city to find a match by city_id.
+    :param city_id: The uuid from city
+    :return: List of cities there found in database
+    """
+    connection: dict = connect_to_postgres()
     city_list: list = []
     city_data: list = []
 
@@ -50,7 +55,7 @@ def get_city_from_database(city_id: str = None) -> Response:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
             city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
             connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
-            alliances = [row[0] for row in connection['cursor'].fetchall()]
+            alliances: list = [row[0] for row in connection['cursor'].fetchall()]
             city_data[0]['allied_power'] = calculate_allied_power(connection,
                                                                   city_id,
                                                                   city_data[0]['geo_location_latitude'],
@@ -58,7 +63,7 @@ def get_city_from_database(city_id: str = None) -> Response:
                                                                   alliances)
 
     except Exception as e:
-        not_found(f"City not found by: {e}")
+        not_found(f"City id not found by error: {e}")
 
     for city in city_data:
         alliances, connection = load_alliances(connection, city['city_uuid'])
@@ -73,20 +78,31 @@ def get_city_from_database(city_id: str = None) -> Response:
 
 
 def delete_city_from_database(city_id: str) -> Response:
-    connection = connect_to_postgres()
+    """
+    Look into database table city to find a match by city_id and delete the city and the coupled alliances.
+    :param city_id: The uuid from city
+    :return:
+    """
+    connection: dict = connect_to_postgres()
     try:
         connection['cursor'].execute(DeleteCityData.CITY.value, (city_id, city_id, city_id,))
         connection['conn'].commit()
 
     except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
+        not_found(f"Delete not complete. City id not found by error: {e}")
 
     disconnect_to_postgres(connection)
 
-    return jsonify({'message': 'Item deleted successfully'})
+    return jsonify({
+        'message': 'City and coupled alliances successfully deleted'}, 200)
 
 
 def insert_city_into_database(dataset: dict) -> tuple[list, str]:
+    """
+    Create a new city and optional given alliances into the database.
+    :param dataset: Dict of default information from city. Look to '<repo-root>/README.md' to visit the setup
+    :return:
+    """
     connection = connect_to_postgres()
     beauty_score = get_beauty_score(dataset.get('beauty'))
     city_gen_uuid: str = str(uuid.uuid4())
