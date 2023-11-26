@@ -42,8 +42,8 @@ def insert_alliances(connection: dict, alliances: list, city_id: str) -> dict:
             ))
         connection['conn'].commit()
 
-    except Exception as e:
-        logger.error(f"Failed to insert the alliance to the database by error: {e} - Type: {type(e)}")
+    except Exception as e:  # TODO: psycopg2.errors.ForeignKeyViolation
+        logger.error(f"Failed to insert the alliance to the database by error: {e}")
 
     return connection
 
