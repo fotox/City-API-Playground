@@ -5,7 +5,8 @@ from flasgger import Swagger
 from flask import Flask, Response, request
 from flask_basicauth import BasicAuth
 
-from city_be.city import *
+from city_be.city import get_city_from_database, insert_city_into_database, update_city_into_database, \
+    delete_city_from_database
 from sql_module.execution import execute_sql_by_script
 
 API_PORT: int = 1337
