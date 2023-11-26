@@ -1,6 +1,5 @@
-from dotenv import load_dotenv
-from flask import Flask
 from flasgger import Swagger
+from flask import Flask
 from flask_basicauth import BasicAuth
 
 from city_be.city import *
@@ -11,8 +10,11 @@ API_PORT: int = 1337
 INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_scheme.sql'
 
 app = Flask(__name__)
+
+# Swagger documentation
 swagger = Swagger(app, template_file='swagger.yaml')
 
+# Init database basic authentication
 load_dotenv()
 app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
 app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
@@ -27,9 +29,7 @@ def init_database_scheme():
 
 @app.route('/api/city', methods=['GET'])
 def get_cities():
-    dataset: list = get_city_from_database()
-    message: str = "Cities found successfully"
-    return check_response(dataset, message)
+    return get_city_from_database()
 
 
 @app.route('/api/city/<city_id>', methods=['GET'])

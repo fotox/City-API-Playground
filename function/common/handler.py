@@ -3,6 +3,7 @@ from geopy.distance import geodesic
 
 from common.alliances_classes import *
 from common.city_classes import SelectCityData
+from common.error_handlers import not_found
 
 
 def check_response(dataset: list, message: str) -> Response:
@@ -14,14 +15,9 @@ def check_response(dataset: list, message: str) -> Response:
         }
         status_code = 200
     else:
-        response = {
-            'error': 'City not found',
-            'method': request.method,
-            'body': None
-        }
-        status_code = 404
+        return not_found(error="City not found")
 
-    return make_response(jsonify(response), status_code)
+    return jsonify(response, status_code)
 
 
 def convert_response(city_uuid: str, name: str, geo_location_latitude: float,

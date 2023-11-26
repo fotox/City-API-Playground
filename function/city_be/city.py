@@ -12,13 +12,24 @@ logger = viki_log("city_api")
 
 
 def get_beauty_score(beauty: str | int) -> int | str:
+    """
+    Look into the database table beauty_score and to find a mat
+    :param beauty:
+    :return:
+    """
     connection = connect_to_postgres()
+    beauty_score: int = 0
 
     try:
-        connection['cursor'].execute(SelectBeautyData.BEAUTY_SCORE_BY_NAME.value, (beauty,))
-        beauty_score: int = connection['cursor'].fetchall()[0]
+        if isinstance(beauty, str):
+            connection['cursor'].execute(SelectBeautyData.BEAUTY_SCORE_BY_NAME.value, (beauty,))
+        else:
+            connection['cursor'].execute(SelectBeautyData.BEAUTY_NAME_BY_SCORE.value, (beauty,))
+            _beauty_name: str = connection['cursor'].fetchall()[0]
+            beauty_score = beauty
+
     except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
+        logger.error(f"Beauty code or name not found by error: {e}")
 
     finally:
         disconnect_to_postgres(connection)
@@ -26,9 +37,10 @@ def get_beauty_score(beauty: str | int) -> int | str:
     return beauty_score
 
 
-def get_city_from_database(city_id: str = None) -> list:
+def get_city_from_database(city_id: str = None) -> Response:
     connection = connect_to_postgres()
     city_list: list = []
+    city_data: list = []
 
     try:
         if city_id is None:
@@ -46,7 +58,7 @@ def get_city_from_database(city_id: str = None) -> list:
                                                                   alliances)
 
     except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
+        not_found(f"City not found by: {e}")
 
     for city in city_data:
         alliances, connection = load_alliances(connection, city['city_uuid'])
@@ -55,7 +67,9 @@ def get_city_from_database(city_id: str = None) -> list:
 
     disconnect_to_postgres(connection)
 
-    return city_list
+    return jsonify({
+        'message': 'Cities found successfully',
+        'body': city_list}, 200)
 
 
 def delete_city_from_database(city_id: str) -> Response:
