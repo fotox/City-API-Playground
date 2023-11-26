@@ -33,20 +33,22 @@ def get_city_from_database(city_id: str = None) -> list:
     try:
         if city_id is None:
             connection['cursor'].execute(SelectCityData.CITIES.value)
-            result = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
         else:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
-            result = [convert_response(*row) for row in connection['cursor'].fetchall()]
-            result[0]['allied_power'] = calculate_allied_power(connection,
-                                                               city_id,
-                                                               result[0]['geo_location_latitude'],
-                                                               result[0]['geo_location_longitude'],
-                                                               result[0]['allied_cities'])
+            city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
+            alliances = [row[0] for row in connection['cursor'].fetchall()]
+            city_data[0]['allied_power'] = calculate_allied_power(connection,
+                                                                  city_id,
+                                                                  city_data[0]['geo_location_latitude'],
+                                                                  city_data[0]['geo_location_longitude'],
+                                                                  alliances)
 
     except Exception as e:
         abort(500, description=f'Random Message - TODO. {str(e)}')
 
-    for city in result:
+    for city in city_data:
         alliances, connection = load_alliances(connection, city['city_uuid'])
         city['allied_cities'] = alliances
         city_list.append(city)

@@ -1,4 +1,5 @@
 from flask import request, make_response, jsonify, Response
+from geopy.distance import geodesic
 
 from common.alliances_classes import *
 from common.city_classes import SelectCityData
@@ -75,21 +76,19 @@ def calculate_allied_power(connection: dict, city_id: str, latitude: float, long
             connection['cursor'].execute(SelectCityData.POPULATION.value, (alliance_city,))
             population: int = connection['cursor'].fetchall()[0][0]
             connection['cursor'].execute(SelectCityData.LOCATION.value, (alliance_city,))
-            location: tuple = tuple([row[0] for row in connection['cursor'].fetchall()])
-            print(location)
+            location: list = [row for row in connection['cursor'].fetchall()]
 
-            distance: int = calculate_distance((latitude, longitude), location)
+            distance: geodesic = calculate_distance((latitude, longitude), location[0])
             if distance < 1000:
                 allied_power += population
             elif distance in range(1000, 10000):
-                allied_power += round(population / 2, 0)
+                allied_power += int(round(population / 2, 0))
             else:
-                allied_power += round(population / 4, 0)
+                allied_power += int(round(population / 4, 0))
 
-    print(allied_power)
     return allied_power
 
 
-def calculate_distance(target: tuple, destination: tuple) -> int:
+def calculate_distance(target: tuple, destination: tuple) -> geodesic:
     from geopy.distance import distance
-    return int(round(float(distance(target, destination)), 0))
+    return distance(target, destination)

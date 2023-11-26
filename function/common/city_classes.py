@@ -13,7 +13,7 @@ class SelectCityData(Enum):
 
     POPULATION = "SELECT population FROM city WHERE city_uuid = %s;"
 
-    LOCATION = "SELECT geo_location_longitude, geo_location_latitude FROM city WHERE city_uuid = %s;"
+    LOCATION = "SELECT geo_location_latitude, geo_location_longitude FROM city WHERE city_uuid = %s;"
 
 
 class DeleteCityData(Enum):
