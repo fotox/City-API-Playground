@@ -1,17 +1,16 @@
 import uuid
 
-from flask import abort
-
 from common.beauty_score_classes import *
 from common.city_classes import *
+from common.error_handlers import conflict
 from common.handler import *
 from sql_module.connection import *
-from log_module.log_app import viki_log
 
+from log_module.log_app import viki_log
 logger = viki_log("city_api")
 
 
-def get_beauty_score(beauty: str | int) -> int | str:
+def get_beauty_score(beauty: str | int) -> int:
     """
     Look into database table beauty_score to find a match by beauty description or name.
     :param beauty: ID or description
@@ -46,11 +45,13 @@ def get_city_from_database(city_id: str = None) -> Response:
     connection: dict = connect_to_postgres()
     city_list: list = []
     city_data: list = []
+    message: str = ""
 
     try:
         if city_id is None:
             connection['cursor'].execute(SelectCityData.CITIES.value)
             city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            message = 'Cities found successfully'
         else:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
             city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
@@ -61,6 +62,7 @@ def get_city_from_database(city_id: str = None) -> Response:
                                                                   city_data[0]['geo_location_latitude'],
                                                                   city_data[0]['geo_location_longitude'],
                                                                   alliances)
+            message = 'Cities found successfully'
 
     except Exception as e:
         not_found(f"City id not found by error: {e}")
@@ -73,7 +75,7 @@ def get_city_from_database(city_id: str = None) -> Response:
     disconnect_to_postgres(connection)
 
     return jsonify({
-        'message': 'Cities found successfully',
+        'message': message,
         'body': city_list}, 200)
 
 
@@ -81,7 +83,7 @@ def delete_city_from_database(city_id: str) -> Response:
     """
     Look into database table city to find a match by city_id and delete the city and the coupled alliances.
     :param city_id: The uuid from city
-    :return:
+    :return: Information message to confirm successful deletion
     """
     connection: dict = connect_to_postgres()
     try:
@@ -97,15 +99,16 @@ def delete_city_from_database(city_id: str) -> Response:
         'message': 'City and coupled alliances successfully deleted'}, 200)
 
 
-def insert_city_into_database(dataset: dict) -> tuple[list, str]:
+def insert_city_into_database(dataset: dict) -> Response:
     """
     Create a new city and optional given alliances into the database.
     :param dataset: Dict of default information from city. Look to '<repo-root>/README.md' to visit the setup
-    :return:
+    :return: City which has been added into the database
     """
-    connection = connect_to_postgres()
-    beauty_score = get_beauty_score(dataset.get('beauty'))
+    connection: dict = connect_to_postgres()
+    beauty_score: int = get_beauty_score(dataset.get('beauty'))
     city_gen_uuid: str = str(uuid.uuid4())
+    city_data: dict = {}
 
     try:
         connection['cursor'].execute(InsertCityData.CITY.value, (
@@ -121,26 +124,35 @@ def insert_city_into_database(dataset: dict) -> tuple[list, str]:
             insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
         connection['conn'].commit()
-        message: str = 'Item created successfully'
 
     except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
+        conflict(f"City can't be created by error: {e}")
 
     try:
-        dataset: list = get_city_from_database(city_gen_uuid)
-        logger.debug(dataset)
+        connection['cursor'].execute(SelectCityData.CITIES.value)
+        city_data = [convert_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
-        logger.error(f"dataset: list = get_city_from_database(city_gen_uuid): {e}")
+        not_found(f"City id not found by error: {e}")
 
     disconnect_to_postgres(connection)
 
-    return dataset, message
+    return jsonify({
+        'message': f'Cities successfully created',
+        'body': city_data}, 200)
 
 
 def update_city_into_database(city_id: str, dataset: dict) -> Response:
-    connection = connect_to_postgres()
-    beauty_score = get_beauty_score(dataset.get('beauty'))
+    """
+    Updates a city based on the city_id with the values given in the dataset.
+    :param city_id: The uuid from city
+    :param dataset: Dict of default information from city. Look to '<repo-root>/README.md' to visit the setup.
+                    With updated information.
+    :return: City which has been updated into the database
+    """
+    connection: dict = connect_to_postgres()
+    beauty_score: int = get_beauty_score(dataset.get('beauty'))
+    city_data: dict = {}
 
     try:
         connection['cursor'].execute(UpdateCityData.CITY.value, (
@@ -158,12 +170,18 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
         else:
             connection = delete_alliances(connection, city_id)
 
-        disconnect_to_postgres(connection)
-        result = jsonify({'message': 'City updated successfully'})
+    except Exception as e:
+        conflict(f"City can't be updated by error: {e}")
+
+    try:
+        connection['cursor'].execute(SelectCityData.CITIES.value)
+        city_data = [convert_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
-        abort(500, description=f'Random Message - TODO. {str(e)}')
+        not_found(f"City id not found by error: {e}")
 
     disconnect_to_postgres(connection)
 
-    return result
+    return jsonify({
+        'message': 'City successfully updated',
+        'body': city_data}, 200)
