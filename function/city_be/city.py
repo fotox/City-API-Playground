@@ -1,10 +1,13 @@
 import uuid
+from flask import jsonify, Response
 
-from common.beauty_score_classes import *
-from common.city_classes import *
-from common.error_handlers import conflict
-from common.handler import *
-from sql_module.connection import *
+from api_classes.alliances_classes import SelectAlliancesData
+from api_classes.beauty_score_classes import SelectBeautyData
+from api_classes.city_classes import SelectCityData, DeleteCityData, InsertCityData, UpdateCityData
+from common.error import conflict, not_found
+from common.events import load_alliances, insert_alliances, delete_alliances
+from common.process import convert_city_response, calculate_allied_power
+from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
 from log_module.log_app import viki_log
 logger = viki_log("city_api")
@@ -28,7 +31,7 @@ def get_beauty_score(beauty: str | int) -> int:
             beauty_score = beauty
 
     except Exception as e:
-        logger.error(f"Beauty code or name not found by error: {e}")
+        logger.error(f"Beauty code or name not found by error: {e} - Type: {type(e)}")
 
     finally:
         disconnect_to_postgres(connection)
@@ -65,7 +68,7 @@ def get_city_from_database(city_id: str = None) -> Response:
             message = 'Cities found successfully'
 
     except Exception as e:
-        not_found(f"City id not found by error: {e}")
+        not_found(f"City id not found by error: {e} - Type: {type(e)}")
 
     for city in city_data:
         alliances, connection = load_alliances(connection, city['city_uuid'])
@@ -91,7 +94,7 @@ def delete_city_from_database(city_id: str) -> Response:
         connection['conn'].commit()
 
     except Exception as e:
-        not_found(f"Delete not complete. City id not found by error: {e}")
+        not_found(f"Delete not complete. City id not found by error: {e} - Type: {type(e)}")
 
     disconnect_to_postgres(connection)
 
@@ -126,14 +129,14 @@ def insert_city_into_database(dataset: dict) -> Response:
         connection['conn'].commit()
 
     except Exception as e:
-        conflict(f"City can't be created by error: {e}")
+        conflict(f"City can't be created by error: {e} - Type: {type(e)}")
 
     try:
         connection['cursor'].execute(SelectCityData.CITIES.value)
         city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
-        not_found(f"City id not found by error: {e}")
+        not_found(f"City id not found by error: {e} - Type: {type(e)}")
 
     disconnect_to_postgres(connection)
 
@@ -171,14 +174,14 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
             connection = delete_alliances(connection, city_id)
 
     except Exception as e:
-        conflict(f"City can't be updated by error: {e}")
+        conflict(f"City can't be updated by error: {e} - Type: {type(e)}")
 
     try:
         connection['cursor'].execute(SelectCityData.CITIES.value)
         city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
-        not_found(f"City id not found by error: {e}")
+        not_found(f"City id not found by error: {e} - Type: {type(e)}")
 
     disconnect_to_postgres(connection)
 

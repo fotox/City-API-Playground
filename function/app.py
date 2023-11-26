@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from flasgger import Swagger
 from flask import Flask, Response, request
 from flask_basicauth import BasicAuth

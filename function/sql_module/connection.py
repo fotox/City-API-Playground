@@ -43,5 +43,6 @@ def disconnect_to_postgres(connection: dict) -> None:
     try:
         connection["cursor"].close()
         connection["conn"].close()
+
     except Exception as e:
         logger.error(f"Connection to database can't be closed: {e} - Type: {type(e)}")
