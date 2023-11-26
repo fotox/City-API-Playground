@@ -50,11 +50,11 @@ def get_city_from_database(city_id: str = None) -> Response:
     try:
         if city_id is None:
             connection['cursor'].execute(SelectCityData.CITIES.value)
-            city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()]
             message = 'Cities found successfully'
         else:
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
-            city_data = [convert_response(*row) for row in connection['cursor'].fetchall()]
+            city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()]
             connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
             alliances: list = [row[0] for row in connection['cursor'].fetchall()]
             city_data[0]['allied_power'] = calculate_allied_power(connection,
@@ -130,7 +130,7 @@ def insert_city_into_database(dataset: dict) -> Response:
 
     try:
         connection['cursor'].execute(SelectCityData.CITIES.value)
-        city_data = [convert_response(*row) for row in connection['cursor'].fetchall()][0]
+        city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
         not_found(f"City id not found by error: {e}")
@@ -175,7 +175,7 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
 
     try:
         connection['cursor'].execute(SelectCityData.CITIES.value)
-        city_data = [convert_response(*row) for row in connection['cursor'].fetchall()][0]
+        city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
 
     except Exception as e:
         not_found(f"City id not found by error: {e}")

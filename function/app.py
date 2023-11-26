@@ -3,7 +3,6 @@ from flask import Flask
 from flask_basicauth import BasicAuth
 
 from city_be.city import *
-from common.handler import check_response
 from sql_module.execution import execute_sql_by_script
 
 API_PORT: int = 1337
@@ -34,22 +33,17 @@ def get_cities():
 
 @app.route('/api/city/<city_id>', methods=['GET'])
 def get_city(city_id: str):
-    dataset: list = get_city_from_database(city_id)
-    message: str = "City found successfully"
-    return check_response(dataset, message)
+    return get_city_from_database(city_id)
 
 
 @app.route('/api/city', methods=['POST'])
 def create_city():
-    request_dataset: dict = request.get_json()
-    dataset, message = insert_city_into_database(request_dataset)
-    return check_response(dataset, message)
+    return insert_city_into_database(request.get_json())
 
 
 @app.route('/api/city/<city_id>', methods=['PUT'])
 def update_city(city_id: str):
-    dataset = request.get_json()
-    return update_city_into_database(city_id, dataset)
+    return update_city_into_database(city_id, request.get_json())
 
 
 @app.route('/api/city/<city_id>', methods=['DELETE'])
