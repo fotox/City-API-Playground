@@ -1,10 +1,12 @@
-from flask import Flask, request
+from flask import Flask
+from flasgger import Swagger
 
 from city_be.city import *
 from common.handler import check_response
 
 API_PORT = 1337
 app = Flask(__name__)
+swagger = Swagger(app, template_file='swagger.yaml')
 
 
 @app.route('/api/city', methods=['GET'])
