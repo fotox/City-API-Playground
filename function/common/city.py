@@ -1,15 +1,17 @@
 import uuid
+
 from flask import jsonify, Response
 
 from api_classes.alliances_classes import SelectAlliancesData
 from api_classes.beauty_score_classes import SelectBeautyData
 from api_classes.city_classes import SelectCityData, DeleteCityData, InsertCityData, UpdateCityData
-from common.error import conflict, not_found
+from common.error import conflict, not_found, bad_request
 from common.events import load_alliances, insert_alliances, delete_alliances
 from common.process import convert_city_response, calculate_allied_power
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
 from log_module.log_app import viki_log
+
 logger = viki_log("city_api")
 
 
@@ -25,16 +27,16 @@ def get_beauty_score(beauty: str | int) -> int:
     try:
         if isinstance(beauty, str):
             connection['cursor'].execute(SelectBeautyData.BEAUTY_SCORE_BY_NAME.value, (beauty,))
+            beauty_score: str = connection['cursor'].fetchall()[0]
         else:
             connection['cursor'].execute(SelectBeautyData.BEAUTY_NAME_BY_SCORE.value, (beauty,))
             _beauty_name: str = connection['cursor'].fetchall()[0]
             beauty_score = beauty
 
-    except Exception as e:
-        logger.error(f"Beauty code or name not found by error: {e} - Type: {type(e)}")
+    except IndexError:
+        logger.error(f"Beauty code or name not found")
 
-    finally:
-        disconnect_to_postgres(connection)
+    disconnect_to_postgres(connection)
 
     return beauty_score
 
@@ -47,8 +49,6 @@ def get_city_from_database(city_id: str = None) -> Response:
     """
     connection: dict = connect_to_postgres()
     city_list: list = []
-    city_data: list = []
-    message: str = ""
 
     try:
         if city_id is None:
@@ -56,6 +56,12 @@ def get_city_from_database(city_id: str = None) -> Response:
             city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()]
             message = 'Cities found successfully'
         else:
+            try:
+                uuid.UUID(city_id, version=4)
+
+            except ValueError:
+                return bad_request(f"City id type must be an uuid.uuid4()")
+
             connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
             city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()]
             connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
@@ -67,8 +73,9 @@ def get_city_from_database(city_id: str = None) -> Response:
                                                                   alliances)
             message = 'Cities found successfully'
 
-    except Exception as e:
-        not_found(f"City id not found by error: {e} - Type: {type(e)}")
+    except IndexError:
+        disconnect_to_postgres(connection)
+        return not_found(f"City with id {city_id} not found in database")
 
     for city in city_data:
         alliances, connection = load_alliances(connection, city['city_uuid'])
@@ -99,7 +106,7 @@ def delete_city_from_database(city_id: str) -> Response:
     disconnect_to_postgres(connection)
 
     return jsonify({
-        'message': 'City and coupled alliances successfully deleted'}, 200)
+        'message': 'City and coupled alliances successfully deleted'}, 202)
 
 
 def insert_city_into_database(dataset: dict) -> Response:
@@ -113,6 +120,9 @@ def insert_city_into_database(dataset: dict) -> Response:
     city_gen_uuid: str = str(uuid.uuid4())
     city_data: dict = {}
 
+    if dataset.get('population') <= 0:
+        return bad_request("Population must be positive")
+
     try:
         connection['cursor'].execute(InsertCityData.CITY.value, (
             city_gen_uuid,
@@ -123,26 +133,26 @@ def insert_city_into_database(dataset: dict) -> Response:
             dataset.get('population')
         ))
 
-        if dataset.get('allied_cities') is not None:
+        if dataset.get('allied_cities') is not []:
             insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
         connection['conn'].commit()
 
-    except Exception as e:
-        conflict(f"City can't be created by error: {e} - Type: {type(e)}")
+    except Exception as e:  # TODO: psycopg2.errors.ForeignKeyViolation
+        conflict(f"City can't be created by error: {e}")
 
     try:
         connection['cursor'].execute(SelectCityData.CITIES.value)
         city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
 
-    except Exception as e:
-        not_found(f"City id not found by error: {e} - Type: {type(e)}")
+    except Exception as e:  # TODO: psycopg2.errors.InFailedSqlTransaction
+        not_found(f"City id not found by error: {e}")
 
     disconnect_to_postgres(connection)
 
     return jsonify({
         'message': f'Cities successfully created',
-        'body': city_data}, 200)
+        'body': city_data}, 201)
 
 
 def update_city_into_database(city_id: str, dataset: dict) -> Response:
@@ -187,4 +197,4 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
 
     return jsonify({
         'message': 'City successfully updated',
-        'body': city_data}, 200)
+        'body': city_data}, 202)
