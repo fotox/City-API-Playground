@@ -1,3 +1,8 @@
+-- DROP ALL TABLES
+DROP TABLE if exists alliances;
+DROP TABLE if exists city;
+DROP TABLE if exists beauty_score;
+
 -- CREATE BEAUTY SCORE TABLE
 CREATE TABLE beauty_score (
     id SERIAL PRIMARY KEY,

@@ -1,12 +1,28 @@
+from dotenv import load_dotenv
 from flask import Flask
 from flasgger import Swagger
+from flask_basicauth import BasicAuth
 
 from city_be.city import *
 from common.handler import check_response
+from sql_module.execution import execute_sql_by_script
 
-API_PORT = 1337
+API_PORT: int = 1337
+INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_scheme.sql'
+
 app = Flask(__name__)
 swagger = Swagger(app, template_file='swagger.yaml')
+
+load_dotenv()
+app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
+app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
+basic_auth = BasicAuth(app)
+
+
+@app.route('/api/init_db', methods=['POST'])
+@basic_auth.required
+def init_database_scheme():
+    return execute_sql_by_script(INIT_DB_SCRIPT)
 
 
 @app.route('/api/city', methods=['GET'])

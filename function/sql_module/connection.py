@@ -1,16 +1,18 @@
 import os
 import psycopg2
+from dotenv import load_dotenv
 
 from log_module.log_app import viki_log
 
 logger = viki_log("city_api")
 
+load_dotenv()
 db_params = {
-    'host': os.environ['PGHOST'],
-    'database': 'cities',
-    'user': os.environ['PGUSER'],
-    'password': os.environ['PGPASSWORD'],
-    'port': os.environ['PGPORT']
+    'host': os.getenv('PGHOST'),            # os.environ['PGHOST'],
+    'port': os.getenv('PGPORT'),            # os.environ['PGPORT']
+    'user': os.getenv('PGUSER'),            # os.environ['PGUSER'],
+    'password': os.getenv('PGPASSWORD'),    # os.environ['PGPASSWORD'],
+    'database': 'cities'
 }
 
 
