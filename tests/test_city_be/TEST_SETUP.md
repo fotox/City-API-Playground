@@ -14,17 +14,16 @@
     "expected": {
       "status": 200,
       "body": {
-            "allied_cities": [
-                "e5a43d11-ed66-465e-b320-39b2c468cb1e",
-                "d840aa0d-8951-4c41-8b7f-32c90a88e296"
-            ],
-            "beauty": "Ugly",
-            "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
-            "geo_location_latitude": 40.7128,
-            "geo_location_longitude": -74.006,
-            "name": "City A",
-            "population": 100000
-        }
+        "allied_cities": [
+          "e5a43d11-ed66-465e-b320-39b2c468cb1e",
+          "d840aa0d-8951-4c41-8b7f-32c90a88e296"
+        ],
+        "beauty": "Ugly",
+        "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
+        "geo_location_latitude": 40.7128,
+        "geo_location_longitude": -74.006,
+        "name": "City A",
+        "population": 100000
       }
     }
   }
