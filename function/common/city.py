@@ -30,7 +30,12 @@ def create_app(config_name) -> Flask:
     :return: configure flask app
     """
     app: Flask = Flask(__name__)
-    app.config.from_object(f'config.{config_name}')
+
+    try:
+        app.config.from_object(f'config.{config_name}')
+    except ImportError:
+        logger.error(f"Config name: {config_name} not found.")
+        exit(1)
 
     db = SQLAlchemy()
     db.init_app(app)
@@ -44,9 +49,6 @@ def create_app(config_name) -> Flask:
         elif config_name == 'test':
             execute_sql_by_script(INIT_TEST_DB_SCRIPT)
             execute_sql_by_script(FILL_TEST_DB_SCRIPT)
-        else:
-            logger.error(f"The config name {config_name} is not a valid config.")
-            exit(1)
 
     return app
 
