@@ -41,9 +41,7 @@ def create_app(config_name) -> Flask:
     db.init_app(app)
 
     with app.app_context():
-        if config_name == 'prod':
-            execute_sql_by_script(INIT_PROD_DB_SCRIPT)
-        elif config_name == 'dev':
+        if config_name == 'dev':
             execute_sql_by_script(INIT_DEV_DB_SCRIPT)
             execute_sql_by_script(FILL_DEV_DB_SCRIPT)
         elif config_name == 'test':
@@ -124,7 +122,8 @@ def get_city_from_database(city_id: str = None) -> Response:
 
     return jsonify({
         'message': message,
-        'body': city_list}, 200)
+        'body': city_list,
+        'status': '200'})
 
 
 def delete_city_from_database(city_id: str) -> Response:
