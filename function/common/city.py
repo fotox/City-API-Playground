@@ -118,7 +118,7 @@ def get_city_from_database(city_id: str = None) -> Response:
     return jsonify({
         'message': message,
         'body': city_list,
-        'status_code': '200'})
+        'status': 200})
 
 
 def delete_city_from_database(city_id: str) -> Response:

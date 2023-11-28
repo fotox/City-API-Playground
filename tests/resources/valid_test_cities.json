@@ -3,7 +3,7 @@
     "description": "Get city by id",
     "event": {
       "httpMethod": "GET",
-      "path": "/api/city"
+      "path": "/api/city/311b223e-8263-4c1d-b0a8-d578444f13c8"
     },
     "expected": {
       "body": [
