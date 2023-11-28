@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Response, request
+from flask import Response, request, Flask
 from flask_basicauth import BasicAuth
 
 from common.city import get_city_from_database, insert_city_into_database, update_city_into_database, \
@@ -17,7 +17,7 @@ CONFIG_NAME = os.getenv('PGSCHEME')
 INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
 
 # Initial app
-app = create_app(CONFIG_NAME)
+app: Flask = create_app(CONFIG_NAME)
 
 # Swagger documentation
 swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
