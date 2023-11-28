@@ -1,15 +1,19 @@
+import os
 from enum import Enum
+
+SCHEME = os.getenv('PGSCHEME')
 
 
 class SelectAlliancesData(Enum):
-    ALLIANCES = ("SELECT allied_cities FROM alliances "
-                 "WHERE city = %s;")
+    ALLIANCES = (f"SELECT {SCHEME}.alliances.allied_cities FROM {SCHEME}.alliances "
+                 f"WHERE {SCHEME}.alliances.city = %s;")
 
 
 class InsertAllianceData(Enum):
-    ALLIANCES = ("INSERT INTO alliances (city, allied_cities) "
-                 "VALUES (%s, %s);")
+    ALLIANCES = (f"INSERT INTO {SCHEME}.alliances ({SCHEME}.alliances.city, {SCHEME}.alliances.allied_cities) "
+                 f"VALUES (%s, %s);")
 
 
 class DeleteAllianceData(Enum):
-    ALLIANCES = "DELETE FROM alliances WHERE city = %s or allied_cities = %s;"
+    ALLIANCES = (f"DELETE FROM {SCHEME}.alliances "
+                 f"WHERE {SCHEME}.alliances.city = %s or {SCHEME}.alliances.allied_cities = %s;")

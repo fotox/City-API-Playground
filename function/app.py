@@ -2,23 +2,26 @@ import os
 
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Flask, Response, request
+from flask import Response, request
 from flask_basicauth import BasicAuth
 
 from common.city import get_city_from_database, insert_city_into_database, update_city_into_database, \
-    delete_city_from_database
+    delete_city_from_database, create_app
 from sql_module.execution import execute_sql_by_script
-
-API_PORT: int = 1337
-INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_scheme.sql'
-
-app: Flask = Flask(__name__)
-
-# Swagger documentation
-swagger: Swagger = Swagger(app, template_file='swagger.yaml')
 
 # Init database basic authentication
 load_dotenv()
+
+API_PORT: int = 1337
+CONFIG_NAME = os.getenv('PGSCHEME')
+INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
+
+# Initial app
+app = create_app(CONFIG_NAME)
+
+# Swagger documentation
+swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
+
 app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
 app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
 basic_auth: BasicAuth = BasicAuth(app)

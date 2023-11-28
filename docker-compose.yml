@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres_pw
-      POSTGRES_DB: cities
+      POSTGRES_DB: city
     ports:
       - "5432:5432"
 

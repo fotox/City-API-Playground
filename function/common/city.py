@@ -1,6 +1,7 @@
 import uuid
 
-from flask import jsonify, Response
+from flask import jsonify, Response, Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from api_classes.alliances_classes import SelectAlliancesData
 from api_classes.beauty_score_classes import SelectBeautyData
@@ -11,8 +12,43 @@ from common.process import convert_city_response, calculate_allied_power
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
 from log_module.log_app import viki_log
+from sql_module.execution import execute_sql_by_script
 
 logger = viki_log("city_api")
+
+INIT_PROD_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
+INIT_DEV_DB_SCRIPT: str = 'sql_module/resources/0_0_2_init_dev_scheme.sql'
+INIT_TEST_DB_SCRIPT: str = 'sql_module/resources/0_0_3_init_test_scheme.sql'
+FILL_DEV_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_dev_datasets.sql'
+FILL_TEST_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_test_datasets.sql'
+
+
+def create_app(config_name) -> Flask:
+    """
+    Set the config to running flask app.
+    :param config_name: type of configuration ('dev', 'test', 'prod')
+    :return: configure flask app
+    """
+    app: Flask = Flask(__name__)
+    app.config.from_object(f'config.{config_name}')
+
+    db = SQLAlchemy()
+    db.init_app(app)
+
+    with app.app_context():
+        if config_name == 'prod':
+            execute_sql_by_script(INIT_PROD_DB_SCRIPT)
+        elif config_name == 'dev':
+            execute_sql_by_script(INIT_DEV_DB_SCRIPT)
+            execute_sql_by_script(FILL_DEV_DB_SCRIPT)
+        elif config_name == 'test':
+            execute_sql_by_script(INIT_TEST_DB_SCRIPT)
+            execute_sql_by_script(FILL_TEST_DB_SCRIPT)
+        else:
+            logger.error(f"The config name {config_name} is not a valid config.")
+            exit(1)
+
+    return app
 
 
 def get_beauty_score(beauty: str | int) -> int:

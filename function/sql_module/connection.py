@@ -12,7 +12,7 @@ db_params = {
     'port': os.getenv('PGPORT'),            # os.environ['PGPORT']
     'user': os.getenv('PGUSER'),            # os.environ['PGUSER'],
     'password': os.getenv('PGPASSWORD'),    # os.environ['PGPASSWORD'],
-    'database': 'cities'
+    'database': 'city'
 }
 
 
