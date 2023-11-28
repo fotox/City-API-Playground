@@ -1,6 +1,3 @@
-import psycopg2
-import pytest
-
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
 
