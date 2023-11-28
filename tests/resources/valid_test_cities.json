@@ -1,0 +1,25 @@
+[
+  {
+    "description": "Get city by id",
+    "event": {
+      "httpMethod": "GET",
+      "path": "/api/city"
+    },
+    "expected": {
+      "body": [
+        {
+          "allied_cities": [],
+          "allied_power": 0,
+          "beauty": "Ugly",
+          "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
+          "geo_location_latitude": 40.7128,
+          "geo_location_longitude": -74.006,
+          "name": "City A",
+          "population": 100000
+        }
+      ],
+      "message": "Cities found successfully",
+      "status": "200"
+    }
+  }
+]
