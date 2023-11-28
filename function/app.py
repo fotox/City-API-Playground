@@ -1,5 +1,4 @@
 import os
-
 from dotenv import load_dotenv
 from flasgger import Swagger
 from flask import Response, request, Flask
@@ -12,12 +11,19 @@ from sql_module.execution import execute_sql_by_script
 # Init database basic authentication
 load_dotenv()
 
-API_PORT: int = 1337
-CONFIG_NAME = os.getenv('PGSCHEME')
 INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
+CONFIG = {
+    'TESTING': False,
+    'DEBUG': True,
+    'NAME': 'dev',
+    'PORT': 1337,
+    'SQLALCHEMY_DATABASE_URI': (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
+                                f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"),
+    'SQLALCHEMY_TRACK_MODIFICATIONS': False
+}
 
 # Initial app
-app: Flask = create_app(CONFIG_NAME)
+app: Flask = create_app(CONFIG)
 
 # Swagger documentation
 swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
@@ -59,4 +65,4 @@ def delete_city(city_id: str) -> Response:
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=API_PORT)
+    app.run(port=CONFIG['PORT'])

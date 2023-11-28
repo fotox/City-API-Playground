@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from flask import jsonify, Response, Flask
@@ -23,31 +22,24 @@ INIT_TEST_DB_SCRIPT: str = 'sql_module/resources/0_0_3_init_test_scheme.sql'
 FILL_DEV_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_dev_datasets.sql'
 FILL_TEST_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_test_datasets.sql'
 
-SQLALCHEMY_DATABASE_URI = (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
-                           f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}")
-SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
-def create_app(config_name) -> Flask:
+def create_app(config) -> Flask:
     """
     Set the config to running flask app.
-    :param config_name: type of configuration ('dev', 'test', 'prod')
+    :param config: type of configuration ('dev', 'test', 'prod')
     :return: configure flask app
     """
     app: Flask = Flask(__name__)
-    app.config.update(
-        SQLALCHEMY_DATABASE_URI=SQLALCHEMY_DATABASE_URI,
-        SQLALCHEMY_TRACK_MODIFICATIONS=SQLALCHEMY_TRACK_MODIFICATIONS
-    )
+    app.config.update(config)
 
     db = SQLAlchemy()
     db.init_app(app)
 
     with app.app_context():
-        if config_name == 'dev':
+        if config['NAME'] == 'dev':
             execute_sql_by_script(INIT_DEV_DB_SCRIPT)
             execute_sql_by_script(FILL_DEV_DB_SCRIPT)
-        elif config_name == 'test':
+        elif config['NAME'] == 'test':
             execute_sql_by_script(INIT_TEST_DB_SCRIPT)
             execute_sql_by_script(FILL_TEST_DB_SCRIPT)
 
@@ -126,7 +118,7 @@ def get_city_from_database(city_id: str = None) -> Response:
     return jsonify({
         'message': message,
         'body': city_list,
-        'status': '200'})
+        'status_code': '200'})
 
 
 def delete_city_from_database(city_id: str) -> Response:

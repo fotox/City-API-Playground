@@ -1,6 +1,9 @@
 import os
 from enum import Enum
 
+from dotenv import load_dotenv
+
+load_dotenv()
 SCHEME = os.getenv('PGSCHEME')
 
 
