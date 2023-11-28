@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from flask import jsonify, Response, Flask
@@ -22,6 +23,10 @@ INIT_TEST_DB_SCRIPT: str = 'sql_module/resources/0_0_3_init_test_scheme.sql'
 FILL_DEV_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_dev_datasets.sql'
 FILL_TEST_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_test_datasets.sql'
 
+SQLALCHEMY_DATABASE_URI = (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
+                           f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}")
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 def create_app(config_name) -> Flask:
     """
@@ -30,12 +35,10 @@ def create_app(config_name) -> Flask:
     :return: configure flask app
     """
     app: Flask = Flask(__name__)
-
-    try:
-        app.config.from_object(f'config.{config_name}')
-    except ImportError:
-        logger.error(f"Config name: {config_name} not found.")
-        exit(1)
+    app.config.update(
+        SQLALCHEMY_DATABASE_URI=SQLALCHEMY_DATABASE_URI,
+        SQLALCHEMY_TRACK_MODIFICATIONS=SQLALCHEMY_TRACK_MODIFICATIONS
+    )
 
     db = SQLAlchemy()
     db.init_app(app)
@@ -143,7 +146,8 @@ def delete_city_from_database(city_id: str) -> Response:
     disconnect_to_postgres(connection)
 
     return jsonify({
-        'message': 'City and coupled alliances successfully deleted'}, 202)
+        'message': 'City and coupled alliances successfully deleted',
+        'status': '200'})
 
 
 def insert_city_into_database(dataset: dict) -> Response:
@@ -189,7 +193,8 @@ def insert_city_into_database(dataset: dict) -> Response:
 
     return jsonify({
         'message': f'Cities successfully created',
-        'body': city_data}, 201)
+        'body': city_data,
+        'status': '201'})
 
 
 def update_city_into_database(city_id: str, dataset: dict) -> Response:
@@ -234,4 +239,5 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
 
     return jsonify({
         'message': 'City successfully updated',
-        'body': city_data}, 202)
+        'body': city_data,
+        'status': '202'})
