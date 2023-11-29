@@ -8,7 +8,7 @@ from api_classes.city_classes import SelectCityData, DeleteCityData, InsertCityD
 from common.error import conflict, not_found, bad_request, unsupported_media_type
 from common.events import load_alliances, insert_alliances, delete_alliances
 from common.helper import check_format_of_dataset, zip_city_datasets
-from common.process import convert_city_response, calculate_allied_power
+from common.process import convert_city_response
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
 from log_module.log_app import viki_log
@@ -177,7 +177,7 @@ def insert_city_into_database(dataset: dict) -> Response:
             dataset.get('population')
         ))
 
-        if dataset.get('allied_cities') is not []:
+        if dataset.get('allied_cities'):
             insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
         connection['conn'].commit()
@@ -212,6 +212,7 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
     connection: dict = connect_to_postgres()
     beauty_score: int = get_beauty_score(dataset.get('beauty'))
     city_data: dict = {}
+    actual_allied_cities: list = []
 
     try:
         connection['cursor'].execute(UpdateCityData.CITY.value, (
@@ -224,7 +225,10 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
         ))
         connection['conn'].commit()
 
-        if dataset.get('allied_cities') is not None:
+        actual_allied_cities, connection = load_alliances(connection, city_id)
+
+        if dataset.get('allied_cities') != actual_allied_cities:
+            connection = delete_alliances(connection, city_id)
             connection = insert_alliances(connection, dataset.get('allied_cities'), city_id)
         else:
             connection = delete_alliances(connection, city_id)
@@ -233,8 +237,11 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
         conflict(f"City can't be updated by error: {e} - Type: {type(e)}")
 
     try:
-        connection['cursor'].execute(SelectCityData.CITIES.value)
-        city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
+        city_data = zip_city_datasets(connection, city_id)
+        del city_data['city_uuid']
+
+        if not city_data['allied_cities']:
+            del city_data['allied_power']
 
     except Exception as e:
         not_found(f"City id not found by error: {e} - Type: {type(e)}")
@@ -243,5 +250,6 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
 
     return jsonify({
         'message': 'City successfully updated',
+        'city_uuid': city_id,
         'body': city_data,
-        'status': '202'})
+        'status': 200})

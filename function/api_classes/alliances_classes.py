@@ -19,4 +19,4 @@ class InsertAllianceData(Enum):
 
 class DeleteAllianceData(Enum):
     ALLIANCES = (f"DELETE FROM {SCHEME}.alliances "
-                 f"WHERE {SCHEME}.alliances.city = %s or {SCHEME}.alliances.allied_cities = %s;")
+                 f"WHERE city = %s or allied_cities = %s;")
