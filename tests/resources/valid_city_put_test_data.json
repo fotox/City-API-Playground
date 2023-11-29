@@ -1,0 +1,264 @@
+[
+  {
+    "description": "Put new population to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 20
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 20
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new name to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "Carsten Town",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "Carsten Town",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new latitude to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 1.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 1.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new longitude to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": 10.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": 10.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new longitude and latitude to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 1.5074,
+        "geo_location_longitude": 10.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 1.5074,
+        "geo_location_longitude": 10.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new beauty to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Ugly",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Ugly",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put new alliance city to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [
+          "e5a43d11-ed66-465e-b320-39b2c468cb1e"
+        ],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/ee506bee-b6ad-447b-80d1-5649438cc11e"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [
+          "e5a43d11-ed66-465e-b320-39b2c468cb1e"
+        ],
+        "allied_power": 237500,
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put allied cities from 2 to one to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [
+          "d840aa0d-8951-4c41-8b7f-32c90a88e296"
+        ],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/311b223e-8263-4c1d-b0a8-d578444f13c8"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [
+          "d840aa0d-8951-4c41-8b7f-32c90a88e296"
+        ],
+        "allied_power": 400000,
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  },
+  {
+    "description": "Put allied cities from one to zero to city by id",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "httpMethod": "PUT",
+      "path": "/api/city/d840aa0d-8951-4c41-8b7f-32c90a88e296"
+    },
+    "expected": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Gorgeous",
+        "geo_location_latitude": 51.5074,
+        "geo_location_longitude": -0.1278,
+        "name": "City C",
+        "population": 200000
+      },
+      "city_uuid": "d840aa0d-8951-4c41-8b7f-32c90a88e296",
+      "message": "City successfully updated",
+      "status": 200
+    }
+  }
+]

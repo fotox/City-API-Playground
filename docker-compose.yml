@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: city_database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_pw
+      POSTGRES_DB: city
+    ports:
+      - "5432:5432"
+    networks:
+      city_api_network:
+        ipv4_address: 10.10.0.2
+
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-api
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres_pw
+      PGDATABASE: city
+      PGSCHEME: prod
+      BASIC_AUTH_USERNAME: admin
+      BASIC_AUTH_PASSWORD: password
+    ports:
+      - "1337:1337"
+    depends_on:
+      - postgres
+    networks:
+      city_api_network:
+        ipv4_address: 10.10.0.3
+
+networks:
+  city_api_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/28
+          gateway: 10.10.0.1
