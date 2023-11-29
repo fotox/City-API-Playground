@@ -13,7 +13,7 @@ class SelectAlliancesData(Enum):
 
 
 class InsertAllianceData(Enum):
-    ALLIANCES = (f"INSERT INTO {SCHEME}.alliances ({SCHEME}.alliances.city, {SCHEME}.alliances.allied_cities) "
+    ALLIANCES = (f"INSERT INTO {SCHEME}.alliances (city, allied_cities) "
                  f"VALUES (%s, %s);")
 
 

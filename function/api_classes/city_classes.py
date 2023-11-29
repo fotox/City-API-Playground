@@ -32,9 +32,8 @@ class DeleteCityData(Enum):
 
 
 class InsertCityData(Enum):
-    CITY = (f"INSERT INTO {SCHEME}.city ({SCHEME}.city.city_uuid, {SCHEME}.city.name, "
-            f"{SCHEME}.city.geo_location_latitude, {SCHEME}.city.geo_location_longitude, {SCHEME}.city.beauty, "
-            f"{SCHEME}.city.population) "
+    CITY = (f"INSERT INTO {SCHEME}.city (city_uuid, name, geo_location_latitude, geo_location_longitude, "
+            f"beauty, population) "
             f"VALUES (%s, %s, %s, %s, %s, %s)")
 
 
