@@ -1,3 +1,50 @@
 [
-  {}
+  {
+    "description": "Get city by id with wrong city_id format",
+    "event": {
+      "httpMethod": "GET",
+      "path": "/api/city/311b223e-8263-4c1d-b0a8-d578444f13c"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "City id type must be an uuid.uuid4()",
+      "status": "400"
+    }
+  },
+  {
+    "description": "Get city by id with error city not found",
+    "event": {
+      "httpMethod": "GET",
+      "path": "/api/city/311b223e-8263-4c1d-b0a8-d578444f13c1"
+    },
+    "expected": {
+      "error": "Not Found",
+      "message": "City with id 311b223e-8263-4c1d-b0a8-d578444f13c1 not found in database",
+      "status": 404
+    }
+  },
+  {
+    "description": "Get city by id with wrong url",
+    "event": {
+      "httpMethod": "GET",
+      "path": "/api/cities/311b223e-8263-4c1d-b0a8-d578444f13c1"
+    },
+    "expected": {
+      "error": "Not Found",
+      "message": "Backend not found. Wrong url.",
+      "status": 404
+    }
+  },
+  {
+    "description": "Get city with wrong url",
+    "event": {
+      "httpMethod": "GET",
+      "path": "/api/cities"
+    },
+    "expected": {
+      "error": "Not Found",
+      "message": "Backend not found. Wrong url.",
+      "status": 404
+    }
+  }
 ]

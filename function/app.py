@@ -6,6 +6,7 @@ from flask_basicauth import BasicAuth
 
 from common.city import get_city_from_database, insert_city_into_database, update_city_into_database, \
     delete_city_from_database, create_app
+from common.error import not_found
 from config import set_config
 from sql_module.execution import execute_sql_by_script
 
@@ -23,6 +24,11 @@ swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
 app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
 app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
 basic_auth: BasicAuth = BasicAuth(app)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return not_found("Backend not found. Wrong url.")
 
 
 @app.route('/api/init_db', methods=['POST'])
