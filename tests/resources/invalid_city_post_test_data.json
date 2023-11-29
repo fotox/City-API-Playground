@@ -1,3 +1,267 @@
 [
-  {}
+  {
+    "description": "Post city without name",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: name must set and type must be a str and not empty.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without beauty",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: beauty must set and type must be a int or str.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without latitude",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: geo_location_latitude must set and type must be a float.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without longitude",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: geo_location_longitude must set and type must be a float.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without population",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E"
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: population must set and type must be a int bigger than 0.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with negative population",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": -120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: population must set and type must be a int bigger than 0.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with zero population",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 0
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: population must set and type must be a int bigger than 0.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without allied_cities list ",
+    "event": {
+      "body": {
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: allied_cities must be an empty list or filled with city_id.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with string as allied_cities list ",
+    "event": {
+      "body": {
+        "allied_cities": "311b223e-8263-4c1d-b0a8-d578444f13c8",
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: allied_cities must be an empty list or filled with city_id.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city without longitude and latitude",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: geo_location_latitude must set and type must be a float.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with int in latitude",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: geo_location_latitude must set and type must be a float.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with int in longitude",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Bad Request",
+      "message": "Body format is not allowed for POST request. Please check the body by error: geo_location_longitude must set and type must be a float.",
+      "status": 400
+    }
+  },
+  {
+    "description": "Post city with empty body",
+    "event": {
+      "body": {},
+      "httpMethod": "POST",
+      "path": "/api/city"
+    },
+    "expected": {
+      "error": "Unsupported Media Type",
+      "message": "Empty body is not allowed for POST request.",
+      "status": 415
+    }
+  },
+  {
+    "description": "Post city with wrong path ",
+    "event": {
+      "body": {
+        "allied_cities": [],
+        "beauty": "Average",
+        "geo_location_latitude": 35.6895,
+        "geo_location_longitude": 139.6917,
+        "name": "City E",
+        "population": 120000
+      },
+      "httpMethod": "POST",
+      "path": "/api/cities"
+    },
+    "expected": {
+      "error": "Not Found",
+      "message": "Backend not found. Wrong url.",
+      "status": 404
+    }
+  }
 ]

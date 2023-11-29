@@ -1,6 +1,6 @@
 [
   {
-    "description": "Get city by id with two alliances",
+    "description": "Post city with two alliances",
     "event": {
       "body": {
         "allied_cities": [
@@ -31,7 +31,7 @@
     }
   },
   {
-    "description": "Post city by id with one alliance",
+    "description": "Post city with one alliance",
     "event": {
       "body": {
         "allied_cities": [
@@ -61,7 +61,7 @@
     }
   },
   {
-    "description": "Post city by id without alliance",
+    "description": "Post city without alliance",
     "event": {
       "body": {
         "allied_cities": [],
