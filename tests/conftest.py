@@ -1,17 +1,7 @@
-import os
-
 import pytest
-from function.app import app
 
-TEST_CONFIG = {
-    'TESTING': True,
-    'DEBUG': True,
-    'PORT': 1337,
-    'NAME': 'test',
-    'SQLALCHEMY_DATABASE_URI': (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
-                                f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"),
-    'SQLALCHEMY_TRACK_MODIFICATIONS': False
-}
+from app import app
+from sql_module.execution import execute_sql_by_script
 
 
 @pytest.fixture
@@ -22,4 +12,6 @@ def test_app():
 
 @pytest.fixture(scope="function")
 def test_client(test_app):
+    execute_sql_by_script('function/sql_module/resources/0_0_2_init_test_schema.sql')
+    execute_sql_by_script('function/sql_module/resources/0_1_2_import_test_datasets.sql')
     return test_app.test_client()

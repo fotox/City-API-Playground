@@ -6,24 +6,16 @@ from flask_basicauth import BasicAuth
 
 from common.city import get_city_from_database, insert_city_into_database, update_city_into_database, \
     delete_city_from_database, create_app
+from config import set_config
 from sql_module.execution import execute_sql_by_script
 
 # Init database basic authentication
 load_dotenv()
 
 INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
-CONFIG = {
-    'TESTING': False,
-    'DEBUG': True,
-    'NAME': 'dev',
-    'PORT': 1337,
-    'SQLALCHEMY_DATABASE_URI': (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
-                                f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"),
-    'SQLALCHEMY_TRACK_MODIFICATIONS': False
-}
 
 # Initial app
-app: Flask = create_app(CONFIG)
+app: Flask = create_app(set_config(os.getenv('PGSCHEME')))
 
 # Swagger documentation
 swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
@@ -65,4 +57,4 @@ def delete_city(city_id: str) -> Response:
 
 
 if __name__ == '__main__':
-    app.run(port=CONFIG['PORT'])
+    app.run(port=1337)
