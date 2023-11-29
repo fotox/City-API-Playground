@@ -17,11 +17,10 @@ from sql_module.execution import execute_sql_by_script
 
 logger = viki_log("city_api")
 
-INIT_PROD_DB_SCRIPT: str = '/sql_module/resources/0_0_1_init_prod_scheme.sql'
-INIT_DEV_DB_SCRIPT: str = '/sql_module/resources/0_0_2_init_dev_scheme.sql'
-INIT_TEST_DB_SCRIPT: str = '/sql_module/resources/0_0_3_init_test_scheme.sql'
-FILL_DEV_DB_SCRIPT: str = '/sql_module/resources/0_1_1_import_dev_datasets.sql'
-FILL_TEST_DB_SCRIPT: str = '/sql_module/resources/0_1_1_import_test_datasets.sql'
+INIT_DEV_DB_SCRIPT: str = 'sql_module/resources/0_0_3_init_dev_schema.sql'
+INIT_TEST_DB_SCRIPT: str = 'sql_module/resources/0_0_2_init_test_schema.sql'
+FILL_DEV_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_dev_datasets.sql'
+FILL_TEST_DB_SCRIPT: str = 'sql_module/resources/0_1_2_import_test_datasets.sql'
 
 
 def create_app(config) -> Flask:
@@ -175,6 +174,7 @@ def insert_city_into_database(dataset: dict) -> Response:
             dataset.get('population')
         ))
 
+        logger.debug(dataset.get('allied_cities'))
         if dataset.get('allied_cities') is not []:
             insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
