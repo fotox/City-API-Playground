@@ -30,25 +30,33 @@ http(s)://<IP/DOMAIN>:1337/api/<CALL>/<SUBCALL>
 ### Response
 ```json
 {
-    "body": [
-        {
-            "allied_cities": [
-                "e5a43d11-ed66-465e-b320-39b2c468cb1e",
-                "d840aa0d-8951-4c41-8b7f-32c90a88e296"
-            ],
-            "beauty": "Ugly",
-            "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
-            "geo_location_latitude": 40.7128,
-            "geo_location_longitude": -74.006,
-            "name": "City A",
-            "population": 100000
-        }
-    ],
-    "message": "City found successfully",
-    "method": "GET"
+  "body": [
+    {
+      "allied_cities": [
+        "375b1506-5111-4b75-939d-b2f63a1ee885"
+      ],
+      "allied_power": 180000,
+      "beauty": "Average",
+      "geo_location_latitude": 34.0522,
+      "geo_location_longitude": -118.2437,
+      "name": "City B",
+      "population": 150000
+    }
+  ],
+  "city_uuid": "e5a43d11-ed66-465e-b320-39b2c468cb1e",
+  "message": "City found successfully",
+  "status": 200
 }
 ```
 
 ## Documentation and testing
 The API is documented in Swagger and by docstrings in the functions, classes and methods.
 The API is tested under `<project-root>/tests` by using pytest.
+
+
+## Docker
+If you want to run this API with docker, please use the Dockerfile under `<project-root>/Dockerfile`. These file
+create a docker image on python-11-slim-buster base.
+Similar you can run `docker-compose build` and `docker-compose up`.
+!INFO! - The flask app initial the database. If its on first start failed, please use the backend call to initialized
+the database.
