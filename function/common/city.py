@@ -186,7 +186,7 @@ def insert_city_into_database(dataset: dict) -> Response:
     return jsonify({
         'message': f'Cities successfully created',
         'body': city_data,
-        'status': '201'})
+        'status': 200})
 
 
 def update_city_into_database(city_id: str, dataset: dict) -> Response:
