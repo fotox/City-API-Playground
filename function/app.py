@@ -61,4 +61,4 @@ def delete_city(city_id: str) -> Response:
 
 
 if __name__ == '__main__':
-    app.run(port=1337, host="0.0.0.0", debug=True)
+    app.run(port=1337, host="0.0.0.0")
