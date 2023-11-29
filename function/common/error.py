@@ -34,6 +34,11 @@ def conflict(error):
     return jsonify({'error': 'Conflict', 'message': str(error), 'status': 409})
 
 
+def unsupported_media_type(error):
+    logger.debug(f"Error by unsupported_media_type: {error}")
+    return jsonify({'error': 'Unsupported Media Type', 'message': str(error), 'status': 415})
+
+
 def unprocessable_entity(error):
     logger.debug(f"Error by unprocessable_entity: {error}")
     return jsonify({'error': 'Unprocessable Entity', 'message': str(error), 'status': 422})

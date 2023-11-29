@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from flask import jsonify, Response, Flask
@@ -7,8 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from api_classes.alliances_classes import SelectAlliancesData
 from api_classes.beauty_score_classes import SelectBeautyData
 from api_classes.city_classes import SelectCityData, DeleteCityData, InsertCityData, UpdateCityData
-from common.error import conflict, not_found, bad_request
+from common.error import conflict, not_found, bad_request, unsupported_media_type
 from common.events import load_alliances, insert_alliances, delete_alliances
+from common.helper import check_format_of_dataset
 from common.process import convert_city_response, calculate_allied_power
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
@@ -149,6 +149,14 @@ def insert_city_into_database(dataset: dict) -> Response:
     :param dataset: Dict of default information from city. Look to '<repo-root>/README.md' to visit the setup
     :return: City which has been added into the database
     """
+    if dataset == {}:
+        return unsupported_media_type(f"Empty body is not allowed for POST request.")
+
+    check_request: str = check_format_of_dataset(dataset)
+    if check_request != "Dataset is valid":
+        return bad_request(f"Body format is not allowed for POST request. "
+                           f"Please check the body by error: {check_request}")
+
     connection: dict = connect_to_postgres()
     beauty_score: int = get_beauty_score(dataset.get('beauty'))
     city_gen_uuid: str = str(uuid.uuid4())
