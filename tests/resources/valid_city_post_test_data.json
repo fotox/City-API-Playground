@@ -26,7 +26,7 @@
         "name": "City A",
         "population": 100000
       },
-      "message": "Cities successfully created",
+      "message": "City successfully created",
       "status": 200
     }
   },
@@ -56,7 +56,7 @@
         "name": "City A",
         "population": 100000
       },
-      "message": "Cities successfully created",
+      "message": "City successfully created",
       "status": 200
     }
   },
@@ -84,7 +84,7 @@
         "name": "City A",
         "population": 100000
       },
-      "message": "Cities successfully created",
+      "message": "City successfully created",
       "status": 200
     }
   }
