@@ -12,6 +12,6 @@ def test_app():
 
 @pytest.fixture(scope="function")
 def test_client(test_app):
-    execute_sql_by_script('function/sql_module/resources/0_0_2_init_test_schema.sql')
-    execute_sql_by_script('function/sql_module/resources/0_1_2_import_test_datasets.sql')
+    execute_sql_by_script(f'resources/0_0_2_init_test_schema.sql')
+    execute_sql_by_script(f'resources/0_1_2_import_test_datasets.sql')
     return test_app.test_client()

@@ -13,7 +13,8 @@ from sql_module.execution import execute_sql_by_script
 # Init database basic authentication
 load_dotenv()
 
-INIT_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
+SCRIPT_PATH: str = os.path.dirname(os.path.realpath(__file__))
+INIT_DB_SCRIPT: str = f'{SCRIPT_PATH}/sql_module/resources/0_0_1_init_prod_scheme.sql'
 
 # Initial app
 app: Flask = create_app(set_config(os.getenv('PGSCHEME')))
