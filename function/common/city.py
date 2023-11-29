@@ -18,8 +18,10 @@ logger = viki_log("city_api")
 
 INIT_DEV_DB_SCRIPT: str = 'sql_module/resources/0_0_3_init_dev_schema.sql'
 INIT_TEST_DB_SCRIPT: str = 'sql_module/resources/0_0_2_init_test_schema.sql'
+INIT_PROD_DB_SCRIPT: str = 'sql_module/resources/0_0_1_init_prod_scheme.sql'
 FILL_DEV_DB_SCRIPT: str = 'sql_module/resources/0_1_1_import_dev_datasets.sql'
 FILL_TEST_DB_SCRIPT: str = 'sql_module/resources/0_1_2_import_test_datasets.sql'
+FILL_PROD_DB_SCRIPT: str = 'sql_module/resources/0_1_3_import_prod_datasets.sql'
 
 
 def create_app(config) -> Flask:
@@ -41,6 +43,9 @@ def create_app(config) -> Flask:
         elif config['NAME'] == 'test':
             execute_sql_by_script(INIT_TEST_DB_SCRIPT)
             execute_sql_by_script(FILL_TEST_DB_SCRIPT)
+        elif config['NAME'] == 'prod':
+            execute_sql_by_script(INIT_PROD_DB_SCRIPT)
+            execute_sql_by_script(FILL_PROD_DB_SCRIPT)
 
     return app
 
@@ -212,7 +217,6 @@ def update_city_into_database(city_id: str, dataset: dict) -> Response:
     connection: dict = connect_to_postgres()
     beauty_score: int = get_beauty_score(dataset.get('beauty'))
     city_data: dict = {}
-    actual_allied_cities: list = []
 
     try:
         connection['cursor'].execute(UpdateCityData.CITY.value, (

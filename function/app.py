@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from flasgger import Swagger
 from flask import Response, request, Flask
 from flask_basicauth import BasicAuth
@@ -11,19 +10,17 @@ from config import set_config
 from sql_module.execution import execute_sql_by_script
 
 # Init database basic authentication
-load_dotenv()
-
 SCRIPT_PATH: str = os.path.dirname(os.path.realpath(__file__))
 INIT_DB_SCRIPT: str = f'{SCRIPT_PATH}/sql_module/resources/0_0_1_init_prod_scheme.sql'
 
 # Initial app
-app: Flask = create_app(set_config(os.getenv('PGSCHEME')))
+app: Flask = create_app(set_config(os.environ['PGSCHEME']))
 
 # Swagger documentation
 swagger: Swagger = Swagger(app, template_file='../swagger.yaml')
 
-app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
-app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
+app.config['BASIC_AUTH_USERNAME'] = os.environ['BASIC_AUTH_USERNAME']
+app.config['BASIC_AUTH_PASSWORD'] = os.environ['BASIC_AUTH_PASSWORD']
 basic_auth: BasicAuth = BasicAuth(app)
 
 
@@ -64,4 +61,4 @@ def delete_city(city_id: str) -> Response:
 
 
 if __name__ == '__main__':
-    app.run(port=1337)
+    app.run(port=1337, host="0.0.0.0", debug=True)

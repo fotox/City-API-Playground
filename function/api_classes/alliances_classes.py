@@ -1,10 +1,7 @@
 import os
 from enum import Enum
 
-from dotenv import load_dotenv
-
-load_dotenv()
-SCHEME = os.getenv('PGSCHEME')
+SCHEME = os.environ['PGSCHEME']
 
 
 class SelectAlliancesData(Enum):

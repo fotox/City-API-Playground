@@ -1,5 +1,4 @@
 import uuid
-
 import pytest
 
 from common.process import convert_city_response, calculate_distance

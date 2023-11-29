@@ -1,6 +1,7 @@
 from api_classes.alliances_classes import SelectAlliancesData, InsertAllianceData, DeleteAllianceData
 
 from log_module.log_app import viki_log
+
 logger = viki_log("city_api")
 
 

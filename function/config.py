@@ -43,8 +43,8 @@ def config_prod() -> dict:
         'DEBUG': False,
         'PORT': 1337,
         'NAME': 'prod',
-        'SQLALCHEMY_DATABASE_URI': (f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@"
-                                    f"{os.getenv('PGHOST')}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"),
+        'SQLALCHEMY_DATABASE_URI': (f"postgresql://{os.environ['PGUSER']}:{os.environ['PGPASSWORD']}@"
+                                    f"{os.environ['PGHOST']}:{os.environ['PGPORT']}/{os.environ['PGDATABASE']}"),
         'SQLALCHEMY_TRACK_MODIFICATIONS': False
     }
 
