@@ -3,12 +3,11 @@ import uuid
 from flask import jsonify, Response, Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from api_classes.alliances_classes import SelectAlliancesData
 from api_classes.beauty_score_classes import SelectBeautyData
 from api_classes.city_classes import SelectCityData, DeleteCityData, InsertCityData, UpdateCityData
 from common.error import conflict, not_found, bad_request, unsupported_media_type
 from common.events import load_alliances, insert_alliances, delete_alliances
-from common.helper import check_format_of_dataset
+from common.helper import check_format_of_dataset, zip_city_datasets
 from common.process import convert_city_response, calculate_allied_power
 from sql_module.connection import connect_to_postgres, disconnect_to_postgres
 
@@ -93,32 +92,36 @@ def get_city_from_database(city_id: str = None) -> Response:
             except ValueError:
                 return bad_request(f"City id type must be an uuid.uuid4()")
 
-            connection['cursor'].execute(SelectCityData.CITY.value, (city_id,))
-            city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()]
-            connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
-            alliances: list = [row[0] for row in connection['cursor'].fetchall()]
-            city_data[0]['allied_power'] = calculate_allied_power(connection,
-                                                                  city_id,
-                                                                  city_data[0]['geo_location_latitude'],
-                                                                  city_data[0]['geo_location_longitude'],
-                                                                  alliances)
-            message = 'Cities found successfully'
+            city_data = [zip_city_datasets(connection, city_id)]
+            message = 'City found successfully'
 
     except IndexError:
         disconnect_to_postgres(connection)
         return not_found(f"City with id {city_id} not found in database")
 
     for city in city_data:
-        alliances, connection = load_alliances(connection, city['city_uuid'])
+        if len(city_list) == 1:
+            alliances, connection = load_alliances(connection, city_id)
+        else:
+            alliances, connection = load_alliances(connection, city['city_uuid'])
         city['allied_cities'] = alliances
         city_list.append(city)
 
     disconnect_to_postgres(connection)
 
-    return jsonify({
-        'message': message,
-        'body': city_list,
-        'status': 200})
+    if len(city_list) > 1:
+        return jsonify({
+            'message': message,
+            'body': city_list,
+            'status': 200})
+
+    else:
+        del city_list[0]['city_uuid']
+        return jsonify({
+            'message': message,
+            'city_uuid': city_id,
+            'body': city_list,
+            'status': 200})
 
 
 def delete_city_from_database(city_id: str) -> Response:
@@ -174,7 +177,6 @@ def insert_city_into_database(dataset: dict) -> Response:
             dataset.get('population')
         ))
 
-        logger.debug(dataset.get('allied_cities'))
         if dataset.get('allied_cities') is not []:
             insert_alliances(connection, dataset.get('allied_cities'), city_gen_uuid)
 
@@ -184,8 +186,8 @@ def insert_city_into_database(dataset: dict) -> Response:
         conflict(f"City can't be created by error: {e}")
 
     try:
-        connection['cursor'].execute(SelectCityData.CITIES.value)
-        city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
+        city_data = zip_city_datasets(connection, city_gen_uuid)
+        del city_data['city_uuid']
 
     except Exception as e:  # TODO: psycopg2.errors.InFailedSqlTransaction
         not_found(f"City id not found by error: {e}")
@@ -194,6 +196,7 @@ def insert_city_into_database(dataset: dict) -> Response:
 
     return jsonify({
         'message': f'City successfully created',
+        'city_uuid': city_gen_uuid,
         'body': city_data,
         'status': 200})
 

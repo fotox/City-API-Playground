@@ -1,13 +1,16 @@
+import os
 
 import pytest
 import json
 
 from log_module.log_app import viki_log
 
-VALID_CITY_GET_TEST_DATA = json.load(open('tests/resources/valid_city_get_test_data.json'))
-INVALID_CITY_GET_TEST_DATA = json.load(open('tests/resources/invalid_city_get_test_data.json'))
-VALID_CITY_POST_TEST_DATA = json.load(open('tests/resources/valid_city_post_test_data.json'))
-INVALID_CITY_POST_TEST_DATA = json.load(open('tests/resources/invalid_city_post_test_data.json'))
+SCRIPT_PATH: str = os.path.dirname(os.path.realpath(__file__))
+print(SCRIPT_PATH)
+VALID_CITY_GET_TEST_DATA = json.load(open(f'{SCRIPT_PATH}/resources/valid_city_get_test_data.json'))
+INVALID_CITY_GET_TEST_DATA = json.load(open(f'{SCRIPT_PATH}/resources/invalid_city_get_test_data.json'))
+VALID_CITY_POST_TEST_DATA = json.load(open(f'{SCRIPT_PATH}/resources/valid_city_post_test_data.json'))
+INVALID_CITY_POST_TEST_DATA = json.load(open(f'{SCRIPT_PATH}/resources/invalid_city_post_test_data.json'))
 
 
 logger = viki_log("city_api")

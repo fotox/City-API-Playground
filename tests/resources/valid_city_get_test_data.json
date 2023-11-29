@@ -20,9 +20,7 @@
           "population": 100000
         },
         {
-          "allied_cities": [
-            "375b1506-5111-4b75-939d-b2f63a1ee885"
-          ],
+          "allied_cities": [],
           "beauty": "Average",
           "city_uuid": "e5a43d11-ed66-465e-b320-39b2c468cb1e",
           "geo_location_latitude": 34.0522,
@@ -79,14 +77,14 @@
           ],
           "allied_power": 187500,
           "beauty": "Ugly",
-          "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
           "geo_location_latitude": 40.7128,
           "geo_location_longitude": -74.006,
           "name": "City A",
           "population": 100000
         }
       ],
-      "message": "Cities found successfully",
+      "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
+      "message": "City found successfully",
       "status": 200
     }
   },
@@ -104,14 +102,14 @@
           ],
           "allied_power": 180000,
           "beauty": "Average",
-          "city_uuid": "e5a43d11-ed66-465e-b320-39b2c468cb1e",
           "geo_location_latitude": 34.0522,
           "geo_location_longitude": -118.2437,
           "name": "City B",
           "population": 150000
         }
       ],
-      "message": "Cities found successfully",
+      "city_uuid": "e5a43d11-ed66-465e-b320-39b2c468cb1e",
+      "message": "City found successfully",
       "status": 200
     }
   },
@@ -127,14 +125,14 @@
           "allied_cities": [],
           "allied_power": 120000,
           "beauty": "Average",
-          "city_uuid": "375b1506-5111-4b75-939d-b2f63a1ee885",
           "geo_location_latitude": 35.6895,
           "geo_location_longitude": 139.6917,
           "name": "City D",
           "population": 120000
         }
       ],
-      "message": "Cities found successfully",
+      "city_uuid": "375b1506-5111-4b75-939d-b2f63a1ee885",
+      "message": "City found successfully",
       "status": 200
     }
   }

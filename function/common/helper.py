@@ -1,3 +1,6 @@
+from api_classes.alliances_classes import SelectAlliancesData
+from api_classes.city_classes import SelectCityData
+from common.process import convert_city_response, calculate_allied_power
 from log_module.log_app import viki_log
 
 logger = viki_log("city_api")
@@ -27,3 +30,19 @@ def check_format_of_dataset(dataset: dict) -> str:
 
     logger.error(f"{check_format_of_dataset} send: {message}")
     return message
+
+
+def zip_city_datasets(connection: dict, city_id: str) -> dict:
+    connection['cursor'].execute(SelectCityData.CITY.value, (city_id, ))
+    city_data = [convert_city_response(*row) for row in connection['cursor'].fetchall()][0]
+    connection['cursor'].execute(SelectAlliancesData.ALLIANCES.value, (city_id,))
+    city_data['allied_cities'] = [row[0] for row in connection['cursor'].fetchall()]
+
+    if city_data['allied_cities'] is not []:
+        city_data['allied_power'] = calculate_allied_power(connection,
+                                                           city_id,
+                                                           city_data['geo_location_latitude'],
+                                                           city_data['geo_location_longitude'],
+                                                           city_data['allied_cities'])
+
+    return city_data

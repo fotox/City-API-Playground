@@ -18,18 +18,14 @@
     },
     "expected": {
       "body": {
-        "allied_cities": [
-          "e5a43d11-ed66-465e-b320-39b2c468cb1e",
-          "d840aa0d-8951-4c41-8b7f-32c90a88e296"
-        ],
-        "allied_power": 207500,
-        "beauty": "Average",
-        "geo_location_latitude": 35.6895,
-        "geo_location_longitude": 139.6917,
-        "name": "City E",
-        "population": 120000
+        "allied_cities": [],
+        "beauty": "Ugly",
+        "geo_location_latitude": 40.7128,
+        "geo_location_longitude": -74.006,
+        "name": "City A",
+        "population": 100000
       },
-      "city_uuid": "1dd2114e-a580-41cc-890a-315a7779a708",
+      "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
       "message": "City successfully created",
       "status": 200
     }
@@ -52,17 +48,14 @@
     },
     "expected": {
       "body": {
-        "allied_cities": [
-          "375b1506-5111-4b75-939d-b2f63a1ee885"
-        ],
-        "allied_power": 240000,
-        "beauty": "Average",
-        "geo_location_latitude": 35.6895,
-        "geo_location_longitude": 139.6917,
-        "name": "City E",
-        "population": 120000
+        "allied_cities": [],
+        "beauty": "Ugly",
+        "geo_location_latitude": 40.7128,
+        "geo_location_longitude": -74.006,
+        "name": "City A",
+        "population": 100000
       },
-      "city_uuid": "7d6fb228-aa70-4abc-b8e8-faa52eb7f2c4",
+      "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
       "message": "City successfully created",
       "status": 200
     }
@@ -84,14 +77,13 @@
     "expected": {
       "body": {
         "allied_cities": [],
-        "allied_power": 120000,
-        "beauty": "Average",
-        "geo_location_latitude": 35.6895,
-        "geo_location_longitude": 139.6917,
-        "name": "City E",
-        "population": 120000
+        "beauty": "Ugly",
+        "geo_location_latitude": 40.7128,
+        "geo_location_longitude": -74.006,
+        "name": "City A",
+        "population": 100000
       },
-      "city_uuid": "9f9cf6e7-35a4-4f07-ab21-9140f916bf04",
+      "city_uuid": "311b223e-8263-4c1d-b0a8-d578444f13c8",
       "message": "City successfully created",
       "status": 200
     }

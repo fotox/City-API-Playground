@@ -39,6 +39,5 @@ class InsertCityData(Enum):
 
 class UpdateCityData(Enum):
     CITY = (f"UPDATE {SCHEME}.city "
-            f"SET {SCHEME}.city.name = %s, {SCHEME}.city.geo_location_latitude = %s, "
-            f"{SCHEME}.city.geo_location_longitude = %s, {SCHEME}.city.beauty = %s, {SCHEME}.city.population = %s "
+            f"SET name = %s, geo_location_latitude = %s, geo_location_longitude = %s, beauty = %s, population = %s "
             f"WHERE {SCHEME}.city.city_uuid = %s")
